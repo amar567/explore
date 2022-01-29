@@ -55,7 +55,7 @@
         var url = new URL(url_string);
 
         let s = url.searchParams.get("s")||10
-        let b = url.searchParams.get("b")||8/3
+        let b = url.searchParams.get("b")||parseFloat(8/3).toFixed(3)
         let r = url.searchParams.get("r")||28
         let dt = url.searchParams.get('dt')||0.015
         var steps = url.searchParams.get('t')||5000;
@@ -72,9 +72,9 @@
             document.getElementById('t').defaultValue = steps
             document.getElementById('traces').defaultValue = paths
 
-            document.getElementById('sLable').innerHTML = 's: '+s
-            document.getElementById('bLable').innerHTML = 'b: '+b
-            document.getElementById('rLable').innerHTML = 'r: '+r
+            document.getElementById('sLable').innerHTML = 'sigma: '+s
+            document.getElementById('bLable').innerHTML = 'beta: '+b
+            document.getElementById('rLable').innerHTML = 'rho: '+r
             document.getElementById('dtLable').innerHTML = 'step-size: '+dt
             document.getElementById('tLable').innerHTML = 'max steps: '+steps
             document.getElementById('tracesLable').innerHTML = 'max number of trajectories: '+paths
