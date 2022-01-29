@@ -13,20 +13,24 @@
         <div id="graph" style="display: block;"></div>
         <div style="display:flex; flex-direction: column; justify-content: center; align-items: center; width: 40vw; ">
             <form style="display:flex; flex-direction: column; justify-content: center; align-items: center; width: 40vw; " action="">
-                <input type="number" step="0.1" name="s" id="s" placeholder="10" >
-                <label for="s">s: 10</label>
-                <input type="number" step="0.001" name="b" id="b" placeholder="2.666" >
-                <label for="b">b: 8/3</label>
-                <input type="number" step="0.1" name="r" id="r" placeholder="28" >
-                <label for="r">r: 28</label>
-                <input type="number" step="0.001" name="dt" id="dt" placeholder="0.015" >
-                <label for="dt">step-size: 0.015</label>
+                <input type="number" step="0.1" value="" name="s" id="s" >
+                <label id="sLable" for="s">s: 10</label>
+                <input type="number" step="0.001" value="" name="b" id="b">
+                <label id="bLable" for="b">b: 8/3</label>
+                <input type="number" step="0.1" value="" name="r" id="r" >
+                <label id="rLable" for="r">r: 28</label>
+                <input type="number" step="0.001" value="" name="dt" id="dt" >
+                <label id="dtLable" for="dt">step-size: 0.015</label>
+                <input type="number" step="1" value="" name="t" id="t">
+                <label id="tLable" for="t">max steps: 5000</label>
+                <input type="number" step="1" value="" name="traces" id="traces" >
+                <label id="tracesLable" for="traces">max number of trajectories: 10</label>
                 <br>
                 <button type="submit">Plot</button>
             </form>
             <br><br>
             <div style="display:flex; flex-direction: column; justify-content: center; align-items: center; width: 40vw; ">
-                <input style="width: 80%;" id="steps" name="steps" type="range" min="1" max="5000" value="5000">
+                <input style="width: 80%;" id="steps" name="steps" type="range" min="1" max="5000" value="500">
                 <label for="steps" id="stepLable">steps: 5000</label>
                 <br>
                 <input style="width: 80%;" name="paths" id="paths"type="range" min="1" max="10" value="10">
@@ -36,16 +40,16 @@
             <button type="button" onclick="reset()">
                 Reset
             </button>
+            <br><br>
+            <a href="https://github.com/amar567/explore/blob/master/lorentzs%20attractor/index.html" target="_blank" rel="noopener noreferrer">
+                <svg height="32" aria-hidden="true" viewBox="0 0 16 16" version="1.1" width="32" data-view-component="true" class="octicon octicon-mark-github">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
         </div>
     </div>
     
-    <!-- <script src="./lorentz.js"></script> -->
     <script>
-        var steps = 5000;
-        var paths = 10;
-        // var dt = 0.015;
-        var spread = 0.1;
-        var curState = {end: steps};
 
         var url_string = window.location.href
         var url = new URL(url_string);
@@ -54,7 +58,32 @@
         let b = url.searchParams.get("b")||8/3
         let r = url.searchParams.get("r")||28
         let dt = url.searchParams.get('dt')||0.015
+        var steps = url.searchParams.get('t')||5000;
+        var paths = url.searchParams.get('traces')||10;
+        var spread = 0.1;
+        var curState = {end: steps};
+
+        const initialize = ()=>{
+
+            document.getElementById('s').defaultValue =s
+            document.getElementById('b').defaultValue =b
+            document.getElementById('r').defaultValue =r
+            document.getElementById('dt').defaultValue =dt
+            document.getElementById('t').defaultValue = steps
+            document.getElementById('traces').defaultValue = paths
+
+            document.getElementById('sLable').innerHTML = 's: '+s
+            document.getElementById('bLable').innerHTML = 'b: '+b
+            document.getElementById('rLable').innerHTML = 'r: '+r
+            document.getElementById('dtLable').innerHTML = 'step-size: '+dt
+            document.getElementById('tLable').innerHTML = 'max steps: '+steps
+            document.getElementById('tracesLable').innerHTML = 'max number of trajectories: '+paths
+            document.getElementById('stepLable').innerHTML = 'steps: '+steps
+            document.getElementById('pathLable').innerHTML = 'trajectories: '+paths
+        }
         
+        initialize()
+
         let reset = ()=>{
             window.location.href =  window.location.href.split("?")[0]
         }
@@ -68,11 +97,8 @@
             transform: function (data, state) {
                 var data0 = data[0];
                 if (data0.index < paths) {
-                    // console.log(data0);
-                    // console.log(state);
                     var start = state.transform.start;
                     var end = state.transform.end;
-                    // var end = data0.transforms[0].end
                     var newData = Object.assign({}, data0);
                     newData.x = data0.x.slice(start, end);
                     newData.y = data0.y.slice(start, end);
@@ -108,11 +134,8 @@
                     }
                     return ret;
                 }else{
-                    // console.log(data0);
-                    // console.log(state);
                     var start = state.transform.start;
                     var end = state.transform.end;
-                    // var end = data0.transforms[0].end
                     var newData = Object.assign({}, data0);
                     newData.x = data0.x.slice(start, end);
                     newData.y = data0.y.slice(start, end);
@@ -279,7 +302,6 @@
         });
 
         var pathsCtrl = document.getElementById('paths');
-        // var dirty = false;
 
         pathsCtrl.max = paths;
         pathsCtrl.value = paths;
@@ -291,7 +313,6 @@
             }
             document.getElementById('pathLable').innerHTML='trajectories: '+this.value
             await requestAnimationFrame(update);
-            // Plotly.plot('graph', traces, layout);
         });
 
         function cameraXYZ (t) {
@@ -307,19 +328,10 @@
         async function update () {
             if (dirty) {
                 dirty = false;
-                
-                // var gd = document.getElementById('graph');
-                // var scene = gd._fullLayout.scene._scene;
-                // var camera = scene.getCamera();
-                // camera.eye = cameraXYZ(curState.end / steps);
-                // scene.setCamera(camera);
-                
                 await Plotly.restyle('graph', {
                     'transforms.0.end': curState.end,
-                    // 'transforms.0.paths': paths,
                 });
             }
-            // await requestAnimationFrame(update);
         }
 
         requestAnimationFrame(update);
