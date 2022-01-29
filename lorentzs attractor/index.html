@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lorentz attractor</title>
+    <script src="https://s3.amazonaws.com/plotly.rickyreusser.com/20160912200900/plotly-gl3d.js"></script>
+    <!-- <script src="./plotly-gl3d.js"></script> -->
+</head>
+<body>
+    <div id="plot" style="display: flex;flex-direction: row;">
+        <div id="graph" style="display: block;"></div>
+        <div style="display:flex; flex-direction: column; justify-content: center; align-items: center; width: 40vw; ">
+            <form style="display:flex; flex-direction: column; justify-content: center; align-items: center; width: 40vw; " action="">
+                <input type="number" step="0.1" name="s" id="s" placeholder="10" >
+                <label for="s">s: 10</label>
+                <input type="number" step="0.001" name="b" id="b" placeholder="2.666" >
+                <label for="b">b: 8/3</label>
+                <input type="number" step="0.1" name="r" id="r" placeholder="28" >
+                <label for="r">r: 28</label>
+                <input type="number" step="0.001" name="dt" id="dt" placeholder="0.015" >
+                <label for="dt">step-size: 0.015</label>
+                <br>
+                <button type="submit">Plot</button>
+            </form>
+            <br><br>
+            <div style="display:flex; flex-direction: column; justify-content: center; align-items: center; width: 40vw; ">
+                <input style="width: 80%;" id="steps" name="steps" type="range" min="1" max="5000" value="5000">
+                <label for="steps" id="stepLable">steps: 5000</label>
+                <br>
+                <input style="width: 80%;" name="paths" id="paths"type="range" min="1" max="10" value="10">
+                <label for="paths" id="pathLable">trajectories: 10</label>
+            </div>
+            <br><br>
+            <button type="button" onclick="reset()">
+                Reset
+            </button>
+        </div>
+    </div>
+    
+    <!-- <script src="./lorentz.js"></script> -->
+    <script>
+        var steps = 5000;
+        var paths = 10;
+        // var dt = 0.015;
+        var spread = 0.1;
+        var curState = {end: steps};
+
+        var url_string = window.location.href
+        var url = new URL(url_string);
+
+        let s = url.searchParams.get("s")||10
+        let b = url.searchParams.get("b")||8/3
+        let r = url.searchParams.get("r")||28
+        let dt = url.searchParams.get('dt')||0.015
+        
+        let reset = ()=>{
+            window.location.href =  window.location.href.split("?")[0]
+        }
+
+        Plotly.register({
+            moduleType: 'transform',
+            name: 'steps',
+            supplyDefaults: function(transformIn, fullData, layout) {
+                return transformIn;
+            },
+            transform: function (data, state) {
+                var data0 = data[0];
+                if (data0.index < paths) {
+                    // console.log(data0);
+                    // console.log(state);
+                    var start = state.transform.start;
+                    var end = state.transform.end;
+                    // var end = data0.transforms[0].end
+                    var newData = Object.assign({}, data0);
+                    newData.x = data0.x.slice(start, end);
+                    newData.y = data0.y.slice(start, end);
+                    newData.z = data0.z.slice(start, end);
+                    newData.visible = true
+                    var ret = [newData];
+                    let endpoint = state.transform.endpoint
+                    let startpoint = state.transform.startpoint
+                    if (true) {
+                        var newTrace = {
+                            x: [],
+                            y: [],
+                            z: [],
+                            type: 'scatter3d',
+                            mode: 'markers',
+                            marker: {
+                                color: data0.line.color,
+                                size: 4,
+                            },
+                            showlegend: false,
+                        };
+                        if (true) {
+                            newTrace.x.push(data0.x[start]);
+                            newTrace.y.push(data0.y[start]);
+                            newTrace.z.push(data0.z[start]);
+                        }
+                        if (true) {
+                            newTrace.x.push(data0.x[end - 1]);
+                            newTrace.y.push(data0.y[end - 1]);
+                            newTrace.z.push(data0.z[end - 1]);
+                        }
+                        ret.push(newTrace);
+                    }
+                    return ret;
+                }else{
+                    // console.log(data0);
+                    // console.log(state);
+                    var start = state.transform.start;
+                    var end = state.transform.end;
+                    // var end = data0.transforms[0].end
+                    var newData = Object.assign({}, data0);
+                    newData.x = data0.x.slice(start, end);
+                    newData.y = data0.y.slice(start, end);
+                    newData.z = data0.z.slice(start, end);
+                    newData.visible = false
+                    var ret = [newData];
+                    let endpoint = state.transform.endpoint
+                    let startpoint = state.transform.startpoint
+                    if (true) {
+                        var newTrace = {
+                            x: [],
+                            y: [],
+                            z: [],
+                            type: 'scatter3d',
+                            mode: 'markers',
+                            marker: {
+                                color: data0.line.color,
+                                size: 4,
+                            },
+                            showlegend: false,
+                        };
+                        if (false) {
+                            newTrace.x.push(data0.x[start]);
+                            newTrace.y.push(data0.y[start]);
+                            newTrace.z.push(data0.z[start]);
+                        }
+                        if (false) {
+                            newTrace.x.push(data0.x[end - 1]);
+                            newTrace.y.push(data0.y[end - 1]);
+                            newTrace.z.push(data0.z[end - 1]);
+                        }
+                        ret.push(newTrace);
+                    }
+                    return ret;
+                }
+            }
+        });
+
+        function createTrace (n, dt, j, s, b, r) {
+            var x = [1 + (Math.random() * 2 - 1) * spread];
+            var y = [(Math.random() * 2 - 1) * spread];
+            var z = [30 + (Math.random() * 2 - 1) * spread];
+            var s = s
+            var b = b
+            var r = r
+            var dx, dy, dz;
+            var xh, yh, zh;
+            for (var i = 1; i < n; i++) {
+                dx = s * (y[i - 1] - x[i - 1]);
+                dy = x[i - 1] * (r - z[i - 1]) - y[i - 1];
+                dz = x[i - 1] * y[i - 1] - b * z[i - 1];
+
+                xh = x[i - 1] + dx * dt * 0.5;
+                yh = y[i - 1] + dy * dt * 0.5;
+                zh = z[i - 1] + dz * dt * 0.5;
+
+                dx = s * (yh - xh);
+                dy = xh * (r - zh) - yh;
+                dz = xh * yh - b * zh;
+
+                x[i] = x[i - 1] + dx * dt;
+                y[i] = y[i - 1] + dy * dt;
+                z[i] = z[i - 1] + dz * dt;
+            }
+            return {
+                x: x,
+                y: y,
+                z: z,
+                type: 'scatter3d',
+                mode: 'lines',
+                showlegend: false,
+                line: {
+                width: 4
+                },
+                opacity: 0.5,
+                transforms: [{
+                    type: 'steps',
+                    start: 0,
+                    end: steps,
+                    endpoint: true,
+                    startpoint: true,
+                }]
+            };
+        }
+
+        
+        let createTraces = ()=>{
+            let traces = []
+            try {
+                for (var i = 0; i < paths; i++) {
+                    traces.push(createTrace(steps, dt, i, s,b,r));
+                }
+            } catch (e) {
+                console.log(e);
+            }
+            return traces
+        }
+
+        // var traces = createTraces();
+
+        var theta = 0
+        var margin = {t: 10, r: 10, b: 60, l: 30};
+
+        let layout = {
+            scene: {
+                xaxis: {
+                autorange: false,
+                range: [-20, 20],
+                tickmode: 'linear',
+                tick0: 0,
+                dtick: 5
+                },
+                yaxis: {
+                autorange: false,
+                range: [-30, 30],
+                tickmode: 'linear',
+                tick0: 0,
+                dtick: 5
+                },
+                zaxis: {
+                autorange: false,
+                range: [0, 50],
+                tickmode: 'linear',
+                tick0: 0,
+                dtick: 5
+                },
+                camera: {
+                    eye: cameraXYZ(curState.end / steps)
+                }
+            },
+            margin: margin,
+            height: window.innerHeight * 0.9,
+            width: window.innerWidth*0.6,
+        }
+
+        const plotGraph = ()=>{
+            Plotly.plot('graph', createTraces(), layout);
+        }
+
+        plotGraph()
+
+        function resize () {
+            Plotly.relayout('graph', {
+                width: window.innerWidth*0.6,
+                height: window.innerHeight * 0.9
+            })
+        }
+
+        window.addEventListener('resize', resize);
+
+        var stepsCtrl = document.getElementById('steps');
+        var dirty = false;
+
+        stepsCtrl.max = steps;
+        stepsCtrl.value = steps;
+        stepsCtrl.addEventListener('input', async function () {
+            var end = parseInt(this.value);
+            if (curState.end !== end) {
+                curState.end = end;
+                dirty = true;
+            }
+            document.getElementById('stepLable').innerHTML='steps: '+this.value
+            await requestAnimationFrame(update);
+        });
+
+        var pathsCtrl = document.getElementById('paths');
+        // var dirty = false;
+
+        pathsCtrl.max = paths;
+        pathsCtrl.value = paths;
+        pathsCtrl.addEventListener('input', async function () {
+            var number = parseInt(this.value);
+            if (paths !== number) {
+                paths = number;
+                dirty = true;
+            }
+            document.getElementById('pathLable').innerHTML='trajectories: '+this.value
+            await requestAnimationFrame(update);
+            // Plotly.plot('graph', traces, layout);
+        });
+
+        function cameraXYZ (t) {
+            var theta = -t * Math.PI * 2 * 0.5;
+            var dist = 1.75;
+            return {
+                x: Math.cos(theta) * dist,
+                y: Math.sin(theta) * dist,
+                z: 0.7 * dist
+            };
+        }
+
+        async function update () {
+            if (dirty) {
+                dirty = false;
+                
+                // var gd = document.getElementById('graph');
+                // var scene = gd._fullLayout.scene._scene;
+                // var camera = scene.getCamera();
+                // camera.eye = cameraXYZ(curState.end / steps);
+                // scene.setCamera(camera);
+                
+                await Plotly.restyle('graph', {
+                    'transforms.0.end': curState.end,
+                    // 'transforms.0.paths': paths,
+                });
+            }
+            // await requestAnimationFrame(update);
+        }
+
+        requestAnimationFrame(update);
+    </script>
+</body>
+</html>
