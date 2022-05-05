@@ -19,7 +19,7 @@
         <div class="leftSide" style="width: 50%;">
             <div id='coinExp'></div>
             <div style="display: flex;flex-direction: row;width: 100%;justify-content: space-between; ">
-                <h2>No. of iterations : <span id="count"></span></h2>
+                <h2>No. of trials : <span id="count"></span></h2>
                 <div style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
                     <h2>play/pause</h2> &nbsp;&nbsp;
                     <button id="playPauseBtn" class="is-playing" style="width: 50px;height: 50px;border-radius: 100px;border: 0;background-color: rgb(209, 209, 209);display: flex;justify-content: center;align-items: center;">▌▌</button>
@@ -31,9 +31,9 @@
             <h1>Coin toss experiment</h1>
 
             <p>
-                Here we plot <i style="color: rgb(70, 70, 70);">Frequency</i> vs <i style="color: rgb(70, 70, 70);">No. of heads</i> while tossing a coin n time simultaneously in this simulation.
+                Here we plot <i style="color: rgb(70, 70, 70);">Frequency</i> vs <i style="color: rgb(70, 70, 70);">No. of heads</i> of a coin tossed n times per trial.
                 <br>
-                Where probability of getting k heads is given by:
+                The probability of getting k heads in a given trial is given by:
                 <br>
                 $${\Pr(k;n,p)= {\binom {n}{k}}p^{k}(1-p)^{n-k}}$$
                 <br>
@@ -45,14 +45,23 @@
                     <br>
                     k : is the number of heads in a trial.
                 </p>
+                <br>
+
+                The emergent pattern is a binomial distribution.
 
                 <br>
                 <h2>Choose n</h2>
                 <p>
-                    Choose n and press plot to see the graph.
+                    Choose n and p, then press plot to see the graph.
                 </p>
                 <form action="">
                     <input name="coinTossIterations" type="number" id="iterations" placeholder="No of tosses per iteration"></input>
+                    <br>
+                    <input type="range" name="p" id="pInp" max="1" min="0" step="0.01" style="width: 10vw;" />
+                    <label for="p" id="pVal"></label>
+                    <label for="p" id="qVal"></label>
+
+                    <br>
                     <button type="submit">Plot</button>
                 </form>
             </p>
@@ -68,6 +77,21 @@
 
         let n_iterations = 0 ;
         let tosses_per_iteration = url.searchParams.get("coinTossIterations") || 21;
+        let p = url.searchParams.get("p") || 0.5;
+
+        document.getElementById("pInp").value = p
+
+        let pq = (pSlider)=>{
+            document.getElementById("pVal").innerHTML = "p: " + pSlider;
+            document.getElementById("qVal").innerHTML = "q: " + (parseFloat((1-pSlider).toFixed(2)));
+        }
+
+        pq(p)
+
+        document.getElementById("pInp").addEventListener("input", function() {
+            let pSlider = document.getElementById("pInp").value;
+            pq(pSlider);
+        })
 
         document.getElementById("iterations").value = tosses_per_iteration;
 
@@ -96,18 +120,18 @@
 
         Plotly.plot('coinExp', [data], layout);
 
-        let tossCoin = (tosses_per_iteration) => {
+        let tossCoin = (tosses_per_iteration,p) => {
             count = 0
             for (let i = 0; i < tosses_per_iteration; i++) {
-                if (Math.floor(Math.random() * 2) == 1) {
+                if (Math.floor(Math.random()/parseFloat((1-p).toFixed(2))) >= 1) {
                     count++
                 }
             }
             return count
         }
 
-        let updateData = (tosses_per_iteration) => {
-            let result = tossCoin(tosses_per_iteration)
+        let updateData = (tosses_per_iteration,p) => {
+            let result = tossCoin(tosses_per_iteration,p)
             data.y[result]++
             n_iterations++
             document.getElementById('count').innerHTML = n_iterations
@@ -115,23 +139,34 @@
 
         let iterate = setInterval(()=>{Plotly.restyle('coinExp', 'y', [data.y]);}, 300)
 
-        let plotIteration = setInterval(()=>{updateData(tosses_per_iteration)}, 0);
+        let plotIteration = setInterval(()=>{updateData(tosses_per_iteration,p)}, 0);
 
-        document.getElementById("playPauseBtn").addEventListener("click", function(){
+        let playPauseFn = () => {
+            let button = document.getElementById('playPauseBtn')
 
-            if(this.className == 'is-playing'){
-                this.className = "";
-                this.innerHTML = "▶"
+            if(button.className == 'is-playing'){
+                button.className = "";
+                button.innerHTML = "▶"
                 clearInterval(iterate)
                 clearInterval(plotIteration)
             }else{
-                this.className = "is-playing";
-                this.innerHTML = "▌▌";
+                button.className = "is-playing";
+                button.innerHTML = "▌▌";
                 iterate = setInterval(()=>{Plotly.restyle('coinExp', 'y', [data.y]);}, 300)
-                plotIteration = setInterval(()=>{updateData(tosses_per_iteration)}, 0);
+                plotIteration = setInterval(()=>{updateData(tosses_per_iteration,p)}, 0);
             }
 
-        });
+        }
+
+        document.getElementById('playPauseBtn').addEventListener('click', playPauseFn)
+
+        document.addEventListener('keydown', keypress);
+
+        function keypress(e) {
+            if (e.keyCode == 32) {
+                playPauseFn()
+            }
+        }
     </script>
 
     <script>
