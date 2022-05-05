@@ -14,7 +14,7 @@ demo : [here](https://explore.amardeephk.xyz/lorenTzs%20attractor/?s=5&b=2.666&r
 
 code can be found [here](https://github.com/amar567/explore/coin%20toss)
 
-demo : [here](https://explore.amardeephk.xyz/coin toss)
+demo : [here](https://explore.amardeephk.xyz/coin%20toss)
 
 ## boids
 
