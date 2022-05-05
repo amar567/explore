@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>double pendulum</title>
+
+    <style>
+        body{
+            overflow: hidden;
+        }
+    </style>
+
+</head>
+<body style="margin: 0;">
+    <canvas id="canvas" style="background-color: black;border: 0;"></canvas>
+    <script>
+
+        class pendulum {
+
+            /**
+             * @param {number} x - x coordinate of the center of the pendulum
+             * @param {number} y - the y coordinate of the center of the pendulum
+             * @param {number} length - length of the pendulum
+             * @param {number} angle - in radians
+             * @param {number} speed - speed of the pendulum
+             * @param {number} mass - mass of the pendulum
+             * @param {canvas context} ctx - 2d context of canvas
+             * @param {array} hingePos - [x,y] of hinge
+             * @param {number} maxRot - angle of rotation 
+            */
+
+            constructor(initial){
+                this.x = initial.x;
+                this.y = initial.y;
+                this.length = initial.length;
+                this.angle = initial.angle;
+                this.speed = initial.speed;
+                this.mass = initial.mass;
+                this.ctx = initial.ctx;
+                this.hingePos = initial.hingePos;
+                this.maxRot = initial.maxRot / 180 * Math.PI,
+                this.counter = 0;
+            }
+            objects() { 
+                this.ctx.save();
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.hingePos[0],this.hingePos[1]);
+                this.ctx.lineTo(this.hingePos[0],300);
+                this.ctx.lineWidth = 4;
+                this.ctx.strokeStyle = '#fff';
+                this.ctx.stroke();
+                this.ctx.moveTo(this.hingePos[0],this.hingePos[1]);
+                this.ctx.arc(this.hingePos[0], 340, 40, 0, Math.PI*2);
+                this.ctx.fillStyle = "#8f2f4f";
+                this.ctx.fill();
+                this.ctx.font = "48px serif";
+                this.ctx.fillStyle = "#ffeff4";
+                this.ctx.fillText("b1",this.hingePos[0]-20, 355);
+                this.ctx.closePath();
+            }
+            update(){
+                this.ctx.setTransform(1,0,0,1,0,0);
+                this.ctx.clearRect(0,0,canvas.width,canvas.height);
+                this.ctx.translate(canvas.width/2,0);
+                this.angle = Math.sin(this.counter)* this.maxRot;
+                this.ctx.rotate(this.angle);
+                this.ctx.translate(-canvas.width/2,0);
+
+                this.counter += 0.05;
+                this.objects();
+            }
+        }
+
+        var canvas = document.getElementById('canvas');
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+
+        let initialCondotions = {
+            hingePos:[window.innerWidth/2,0],
+            x:0,
+            y:340,
+            length:500,
+            angle:0,
+            speed:0,
+            mass:1,
+            maxRot:50,
+            ctx:canvas.getContext('2d')
+        }
+        let b1 = new pendulum(initialCondotions);
+
+        function draw() {
+            b1.update();
+            window.requestAnimationFrame(draw);
+        }
+        
+        window.onload = draw;
+
+    </script>
+</body>
+</html>
