@@ -170,10 +170,12 @@
 
         const calculateForPhoton = ()=>{
             var wavelength = document.getElementById("ph_lambda").value;
-            voltage = h*c/wavelength/e // eV= h*c/lambda --> V = h*c/lambda/e
+            voltage = h*c/(wavelength*(10**-9))/e // eV= h*c/lambda --> V = h*c/lambda/e
+
+            console.log(voltage);
 
             document.getElementById("ph_lable").innerHTML = 'incident photon wavelength (in nanometers) '+ wavelength;
-            document.getElementById("fringe_width_ph").innerHTML = String(fringe_width(voltage,a,d)*1000000)+' micrometer';
+            document.getElementById("fringe_width_ph").innerHTML = fringe_width(voltage,a,d)+' micrometer';
         }
 
         calculateForPhoton();
