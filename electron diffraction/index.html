@@ -77,6 +77,7 @@
 
 
         let kev = false;
+        let phi = 0;
 
         const vel = (v)=>{
             let x = e*v/(m*c**2);
@@ -131,7 +132,7 @@
         // console.log('lambda = '+lambda(v)*(10**9)+' nm');
         // console.log(String(fringe_width(v,a,d)*1000000)+' micrometer');
 
-        const ph_lambda = (phi)=>{
+        const ph_lambda_max = (phi)=>{
             energy = phi*e
             return h*c/energy
         }
@@ -139,24 +140,29 @@
         const setElement = (element)=>{
             switch(element){
                 case 'Li':
-                    document.getElementById('ph_lambda').max = ph_lambda(lithium_wf)*10**9;
+                    document.getElementById('ph_lambda').max = ph_lambda_max(lithium_wf)*10**9;
                     document.getElementById('ph_lambda').min = 10;
+                    phi = lithium_wf
                     break
                 case 'Na':
-                    document.getElementById('ph_lambda').max = ph_lambda(sodium_wf)*10**9;
+                    document.getElementById('ph_lambda').max = ph_lambda_max(sodium_wf)*10**9;
                     document.getElementById('ph_lambda').min = 10;
+                    phi = sodium_wf
                     break
                 case 'K':
-                    document.getElementById('ph_lambda').max = ph_lambda(pottasium_wf)*10**9;
+                    document.getElementById('ph_lambda').max = ph_lambda_max(pottasium_wf)*10**9;
                     document.getElementById('ph_lambda').min = 10;
+                    phi = pottasium_wf
                     break
                 case 'Rb':
-                    document.getElementById('ph_lambda').max = ph_lambda(rubidium_wf)*10**9;
+                    document.getElementById('ph_lambda').max = ph_lambda_max(rubidium_wf)*10**9;
                     document.getElementById('ph_lambda').min = 10;
+                    phi = rubidium_wf
                     break
                 case 'Cs':
-                    document.getElementById('ph_lambda').max = ph_lambda(caesium_wf)*10**9;
+                    document.getElementById('ph_lambda').max = ph_lambda_max(caesium_wf)*10**9;
                     document.getElementById('ph_lambda').min = 10;
+                    phi = caesium_wf
                     break
             }
         }
@@ -164,16 +170,13 @@
         setElement(document.getElementById('element').value);
 
         document.getElementById('element').addEventListener('input',()=>{
-            console.log(document.getElementById('element').value);
             let element = document.getElementById('element').value;
             setElement(element);
         })
 
         const calculateForPhoton = ()=>{
             var wavelength = document.getElementById("ph_lambda").value;
-            voltage = h*c/(wavelength*(10**-9))/e // eV= h*c/lambda --> V = h*c/lambda/e
-
-            console.log(voltage);
+            voltage = (h*c/(wavelength*(10**-9))/e)-phi // eV= h*c/lambda --> V = h*c/lambda/e
 
             document.getElementById("ph_lable").innerHTML = 'incident photon wavelength (in nanometers) '+ wavelength;
             document.getElementById("fringe_width_ph").innerHTML = fringe_width(voltage,a/1000000,d)*1000000+' micrometer';
