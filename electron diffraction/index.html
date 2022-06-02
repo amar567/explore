@@ -29,7 +29,6 @@
         <br>
         <label for="d" id="d_lable"></label>
         <br>
-        <button onclick="kev_tru()" type="button" id="button">change to kev</button>
     </form>
     <div>
         <h1>fringe width - CRT</h1>
@@ -37,6 +36,8 @@
         <input class="slider" type="range" name="v" id="v" min="1" max="100" step="1">
         <br>
         <label for="v" id="v_lable"></label>
+        <br>
+        <button onclick="kev_tru()" type="button" id="button">change to kev</button>
         <br>
         <h2 id="fringe_width"></h2>
     </div>
@@ -99,7 +100,7 @@
             v = document.getElementById("v").value;
             document.getElementById('a_lable').innerHTML = 'slit separation (in micrometers) '+a;
             document.getElementById('d_lable').innerHTML = 'detector distance (in meters) '+d;
-            document.getElementById('v_lable').innerHTML = 'voltage (in volts) '+v;
+            document.getElementById('v_lable').innerHTML = (kev)? "voltage (in kilo-volts) "+v : "voltage (in volts) "+v;
             document.getElementById("fringe_width").innerHTML = fringe_width(v,a/1000000,d)*1000000 + ' micrometers';
         }
 
@@ -107,7 +108,7 @@
             v = document.getElementById("v").value;
 
             document.getElementById("button").innerHTML = (kev)? "change to kev" : "change to ev";
-            document.getElementById("v_lable").innerHTML = (!kev)? "voltage (in kilo-volts) "+v : "voltage (in volts) "+v;
+            // document.getElementById("v_lable").innerHTML = (!kev)? "voltage (in kilo-volts) "+v : "voltage (in volts) "+v;
             
             kev = !kev;
             calculate();
