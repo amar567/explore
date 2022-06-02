@@ -113,9 +113,18 @@
             calculate();
         }
 
-        document.getElementById("a").addEventListener("input",calculate);
-        document.getElementById("d").addEventListener("input",calculate);
-        document.getElementById("v").addEventListener("input",calculate);
+        document.getElementById("a").addEventListener("input",()=>{
+            calculate();
+            calculateForPhoton();
+        });
+        document.getElementById("d").addEventListener("input",()=>{
+            calculate();
+            calculateForPhoton();
+        });
+        document.getElementById("v").addEventListener("input",()=>{
+            calculate();
+            calculateForPhoton();
+        });
         calculate();
 
         // console.log('lambda = '+lambda(v)*(10**9)+' nm');
