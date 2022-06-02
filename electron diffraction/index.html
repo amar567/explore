@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>electron diffraction</title>
+
+    <style>
+        .slider{
+            width: min(600px,80vw);
+        }
+    </style>
+</head>
+<body>
+
+    <div>
+        <h1>
+            Common set-up parameters
+        </h1>
+    </div>
+
+    <form action="none" method="post">
+        <input class="slider" type="range" name="a" id="a" min="0.01" max="100" step="0.01">
+        <br>
+        <label for="a" id="a_lable"></label>
+        <br>
+        <input class="slider" type="range" name="d" id="d" min="0.01" max="2" step="0.01">
+        <br>
+        <label for="d" id="d_lable"></label>
+        <br>
+        <button onclick="kev_tru()" type="button" id="button">change to kev</button>
+    </form>
+    <div>
+        <h1>fringe width - CRT</h1>
+        <br>
+        <input class="slider" type="range" name="v" id="v" min="1" max="100" step="1">
+        <br>
+        <label for="v" id="v_lable"></label>
+        <br>
+        <h2 id="fringe_width"></h2>
+    </div>
+
+    <hr style="width: 100vh;">
+
+    <div>
+        <h1>fringe width - photo emmision</h1>
+        <br>
+        <select name="element" id="element">
+            <option value="Li">Li</option>
+            <option value="Na">Na</option>
+            <option value="K" selected>K</option>
+            <option value="Rb">Rb</option>
+            <option value="Cs">Cs</option>
+        </select>
+        <label for="element">Select element</label>
+        <br>
+        <input class="slider" type="range" name="ph_lambda" id="ph_lambda" step="0.1">
+        <br>
+        <label for="ph_lambda" id="ph_lable"></label>
+        <br>
+        <h2 id="fringe_width_ph"></h2>
+    </div>
+
+    <script>
+        const e = 1.6021766208e-19;
+        const m = 9.10938356e-31;
+        const h = 6.626070040e-34;
+        const c = 299792458;
+
+        const lithium_wf = 2.9
+        const sodium_wf = 2.36
+        const pottasium_wf = 2.29
+        const rubidium_wf = 2.26
+        const caesium_wf = 1.95
+
+
+        let kev = false;
+
+        const vel = (v)=>{
+            let x = e*v/(m*c**2);
+            return c*Math.sqrt(1-(1/(1+x))**2);
+        }
+
+        const lambda = (v)=>{
+            voltage = (kev)?v*1000:v;
+            let velocity = vel(voltage);
+            return (h/m)*(Math.sqrt(1-(velocity/c)**2)/velocity);
+        }
+
+        const fringe_width = (v,a,d)=>{
+            lamb = lambda(v);
+            return (lamb*d/a);
+        }
+
+        function calculate(){
+            a = document.getElementById("a").value;
+            d = document.getElementById("d").value;
+            v = document.getElementById("v").value;
+            document.getElementById('a_lable').innerHTML = 'slit separation (in micrometers) '+a;
+            document.getElementById('d_lable').innerHTML = 'detector distance (in meters) '+d;
+            document.getElementById('v_lable').innerHTML = 'voltage (in volts) '+v;
+            document.getElementById("fringe_width").innerHTML = fringe_width(v,a/1000000,d)*1000000 + ' micrometers';
+        }
+
+        function kev_tru(){
+            v = document.getElementById("v").value;
+
+            document.getElementById("button").innerHTML = (kev)? "change to kev" : "change to ev";
+            document.getElementById("v_lable").innerHTML = (!kev)? "voltage (in kilo-volts) "+v : "voltage (in volts) "+v;
+            
+            kev = !kev;
+            calculate();
+        }
+
+        document.getElementById("a").addEventListener("input",calculate);
+        document.getElementById("d").addEventListener("input",calculate);
+        document.getElementById("v").addEventListener("input",calculate);
+        calculate();
+
+        // console.log('lambda = '+lambda(v)*(10**9)+' nm');
+        // console.log(String(fringe_width(v,a,d)*1000000)+' micrometer');
+
+        const ph_lambda = (phi)=>{
+            energy = phi*e
+            return h*c/energy
+        }
+
+        const setElement = (element)=>{
+            switch(element){
+                case 'Li':
+                    document.getElementById('ph_lambda').max = ph_lambda(lithium_wf)*10**9;
+                    document.getElementById('ph_lambda').min = 10;
+                    break
+                case 'Na':
+                    document.getElementById('ph_lambda').max = ph_lambda(sodium_wf)*10**9;
+                    document.getElementById('ph_lambda').min = 10;
+                    break
+                case 'K':
+                    document.getElementById('ph_lambda').max = ph_lambda(pottasium_wf)*10**9;
+                    document.getElementById('ph_lambda').min = 10;
+                    break
+                case 'Rb':
+                    document.getElementById('ph_lambda').max = ph_lambda(rubidium_wf)*10**9;
+                    document.getElementById('ph_lambda').min = 10;
+                    break
+                case 'Cs':
+                    document.getElementById('ph_lambda').max = ph_lambda(caesium_wf)*10**9;
+                    document.getElementById('ph_lambda').min = 10;
+                    break
+            }
+        }
+
+        setElement(document.getElementById('element').value);
+
+        document.getElementById('element').addEventListener('input',()=>{
+            console.log(document.getElementById('element').value);
+            let element = document.getElementById('element').value;
+            setElement(element);
+        })
+
+        const calculateForPhoton = ()=>{
+            var wavelength = document.getElementById("ph_lambda").value;
+            voltage = h*c/wavelength/e // eV= h*c/lambda --> V = h*c/lambda/e
+
+            document.getElementById("ph_lable").innerHTML = 'incident photon wavelength (in nanometers) '+ wavelength;
+            document.getElementById("fringe_width_ph").innerHTML = String(fringe_width(voltage,a,d)*1000000)+' micrometer';
+        }
+
+        calculateForPhoton();
+
+        document.getElementById("ph_lambda").addEventListener("input",()=>{
+            var wavelength = document.getElementById("ph_lambda").value;
+            energy = h*c/wavelength
+
+            calculateForPhoton();
+        })
+
+    </script>
+</body>
+</html>

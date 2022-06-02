@@ -12,6 +12,23 @@
     <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js" integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js" integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous"></script>
 
+    <style>
+        table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        }
+        
+        td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+        background-color: #dddddd;
+        }
+    </style>
 
 </head>
 <body>
@@ -25,6 +42,15 @@
                     <button id="playPauseBtn" class="is-playing" style="width: 50px;height: 50px;border-radius: 100px;border: 0;background-color: rgb(209, 209, 209);display: flex;justify-content: center;align-items: center;">▌▌</button>
                 </div>
             </div>
+
+            <table id="table">
+                <tr>
+                    <th>k</th>
+                    <th>Count</th>
+                    <th>Expected</th>
+                </tr>
+            </table>
+
         </div>
         <div class="rightSide">
 
@@ -35,7 +61,7 @@
                 <br>
                 The probability of getting k heads in a given trial is given by:
                 <br>
-                $${\Pr(k;n,p)= {\binom {n}{k}}p^{k}(1-p)^{n-k}}$$
+                $${\Pr(k,n,p)= {\binom {n}{k}}p^{k}(1-p)^{n-k}}$$
                 <br>
                 here:
                 <p>
@@ -63,6 +89,13 @@
 
                     <br>
                     <button type="submit">Plot</button>
+
+                    <br><br>
+                    <a href="https://github.com/amar567/explore/blob/master/coin%20toss/index.html" target="_blank" rel="noopener noreferrer">
+                        <svg height="32" aria-hidden="true" viewBox="0 0 16 16" version="1.1" width="32" data-view-component="true" class="octicon octicon-mark-github">
+                            <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                        </svg>
+                    </a>
                 </form>
             </p>
         </div>
@@ -78,6 +111,7 @@
         let n_iterations = 0 ;
         let tosses_per_iteration = url.searchParams.get("coinTossIterations") || 21;
         let p = url.searchParams.get("p") || 0.5;
+        let pVals = [];
 
         document.getElementById("pInp").value = p
 
@@ -95,11 +129,23 @@
 
         document.getElementById("iterations").value = tosses_per_iteration;
 
-        var data ={
+        var trace1 = {
+            x:[],
+            y: [],
+            opacity: 0.5, 
+            type: "histogram", 
+            name: 'Count'
+        };
+
+        var trace2 = {
             x: [],
             y: [],
-            type: 'bar'
+            opacity: 0.5, 
+            type: "histogram",
+            name: 'Expected'
         };
+
+        plotData = [trace1, trace2];
 
         var layout = {
             title: 'Coin toss experiment',
@@ -110,15 +156,20 @@
                 title: 'frequency (F)'
             },
             width: 800,
-            height: 600
+            height: 600,
+            bargap: 0.05, 
+            bargroupgap: 0.2, 
+            barmode: "overlay"
         };
 
         for (let i = 0; i <= tosses_per_iteration; i++) {
-            data.x.push("​" + i);
-            data.y.push(0);
+            trace1.x.push("​" + i);
+            trace2.x.push("​" + i);
+            trace1.y.push(0);
+            trace1.y.push(0);
         }
 
-        Plotly.plot('coinExp', [data], layout);
+        Plotly.plot('coinExp', [plotData], layout);
 
         let tossCoin = (tosses_per_iteration,p) => {
             count = 0
@@ -130,14 +181,78 @@
             return count
         }
 
+        function product_Range(a,b) {
+            var prd = a,i = a;
+            
+            while (i++< b) {
+                prd*=i;
+            }
+            return prd;
+        }
+
+
+        function combinations(n, k){
+            if (n==k || k==0){
+                return 1;
+            } 
+            else{
+                k=(k < n-k) ? n-k : k;
+                return product_Range(k+1, n)/product_Range(1,n-k);
+            }
+        }
+
+        let prob =(n,p,k)=>{
+            return (combinations(n,k)*Math.pow(p,k)*Math.pow(1-p,n-k))
+        }
+
+        let calculateP = (n,p) => {
+            for (let i = 0; i <= n; i++) {
+                pVals.push(prob(n,p,i))
+            }
+        }
+
+        let makeTable = (tosses_per_iteration,p) => {
+            let table = document.getElementById("table");
+
+            calculateP(tosses_per_iteration,p)
+
+            for (let i = 0; i <= tosses_per_iteration; i++) {
+                let row = table.insertRow(i+1);
+                let cell1 = row.insertCell(0);
+                let cell2 = row.insertCell(1);
+                let cell3 = row.insertCell(2);
+
+                cell1.innerHTML = i;
+                cell2.innerHTML = trace1.y[i];
+                cell2.id = "y" + i;
+                cell3.innerHTML = n_iterations*pVals[i];
+                cell3.id = "yp" + i;
+            }
+
+            console.log(pVals);
+        }
+
+        makeTable(tosses_per_iteration,p)
+
+        let updateTable = (i) => {
+            document.getElementById("y" + i).innerHTML = trace1.y[i];
+
+            for (let j = 0; j <= tosses_per_iteration; j++) {
+                let pval = Math.round(n_iterations*pVals[j])
+                document.getElementById("yp" + j).innerHTML = pval;
+                trace2.y[i]=pval;
+            }
+        }
+
         let updateData = (tosses_per_iteration,p) => {
             let result = tossCoin(tosses_per_iteration,p)
-            data.y[result]++
+            trace1.y[result]++
+            updateTable(result)
             n_iterations++
             document.getElementById('count').innerHTML = n_iterations
         }
 
-        let iterate = setInterval(()=>{Plotly.restyle('coinExp', 'y', [data.y]);}, 300)
+        let iterate = setInterval(()=>{Plotly.restyle('coinExp', 'y', [trace2.y]);}, 300)
 
         let plotIteration = setInterval(()=>{updateData(tosses_per_iteration,p)}, 0);
 
@@ -152,7 +267,7 @@
             }else{
                 button.className = "is-playing";
                 button.innerHTML = "▌▌";
-                iterate = setInterval(()=>{Plotly.restyle('coinExp', 'y', [data.y]);}, 300)
+                iterate = setInterval(()=>{Plotly.restyle('coinExp', 'y', [trace1.y]);}, 300)
                 plotIteration = setInterval(()=>{updateData(tosses_per_iteration,p)}, 0);
             }
 
