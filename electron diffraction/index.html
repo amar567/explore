@@ -175,7 +175,7 @@
             console.log(voltage);
 
             document.getElementById("ph_lable").innerHTML = 'incident photon wavelength (in nanometers) '+ wavelength;
-            document.getElementById("fringe_width_ph").innerHTML = fringe_width(voltage,a,d)+' micrometer';
+            document.getElementById("fringe_width_ph").innerHTML = fringe_width(voltage,a/1000000,d)*1000000+' micrometer';
         }
 
         calculateForPhoton();
