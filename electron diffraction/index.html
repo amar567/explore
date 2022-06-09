@@ -53,6 +53,7 @@
             <option value="K" selected>K</option>
             <option value="Rb">Rb</option>
             <option value="Cs">Cs</option>
+            <option value="In">In</option>
         </select>
         <label for="element">Select element</label>
         <br>
@@ -60,6 +61,8 @@
         <br>
         <label for="ph_lambda" id="ph_lable"></label>
         <br>
+        <h2 id="e_v"></h2>
+        <!-- <br> -->
         <h2 id="fringe_width_ph"></h2>
     </div>
 
@@ -74,6 +77,7 @@
         const pottasium_wf = 2.29
         const rubidium_wf = 2.26
         const caesium_wf = 1.95
+        const indium_wf = 4.12
 
 
         let kev = false;
@@ -109,7 +113,6 @@
             v = document.getElementById("v").value;
 
             document.getElementById("button").innerHTML = (kev)? "change to kev" : "change to ev";
-            // document.getElementById("v_lable").innerHTML = (!kev)? "voltage (in kilo-volts) "+v : "voltage (in volts) "+v;
             
             kev = !kev;
             calculate();
@@ -164,6 +167,11 @@
                     document.getElementById('ph_lambda').min = 10;
                     phi = caesium_wf
                     break
+                case 'In':
+                    document.getElementById('ph_lambda').max = ph_lambda_max(indium_wf)*10**9;
+                    document.getElementById('ph_lambda').min = 10;
+                    phi = indium_wf
+                    break
             }
         }
 
@@ -172,12 +180,14 @@
         document.getElementById('element').addEventListener('input',()=>{
             let element = document.getElementById('element').value;
             setElement(element);
+            calculateForPhoton();
         })
 
         const calculateForPhoton = ()=>{
             var wavelength = document.getElementById("ph_lambda").value;
             voltage = (h*c/(wavelength*(10**-9))/e)-phi // eV= h*c/lambda --> V = h*c/lambda/e
 
+            document.getElementById("e_v").innerHTML = 'energy of emitted electrons :' +voltage + " volts";
             document.getElementById("ph_lable").innerHTML = 'incident photon wavelength (in nanometers) '+ wavelength;
             document.getElementById("fringe_width_ph").innerHTML = fringe_width(voltage,a/1000000,d)*1000000+' micrometer';
         }
