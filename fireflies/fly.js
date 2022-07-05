@@ -1,9 +1,11 @@
 class Fly {
-    constructor(x, y, speedx, blinkPhase, blinkState, visionDirection) {
+    constructor(x, y, speedx,accl, blinkPhase, blinkState, visionDirection) {
         this.x = x;
         this.y = y;
         this.speedx = speedx;
-        this.speedy =  Math.sqrt(1-speedx**2);
+        this.speedy =  speedx;
+        this.acclx = accl;
+        this.accly = accl;
         this.blinkPhase = blinkPhase;
         this.blinkState = blinkState;
         this.visionDirection = visionDirection;
@@ -68,8 +70,10 @@ class Fly {
             this.y += this.speedy;
 
             // speed modification at random - temporary
-            this.speedx = (1-2*Math.random());
-            this.speedy = (Math.random()*2-1)*Math.sqrt(FLY_SPEED**2 - this.speedx**2);
+              // this.speedx = (1-2*Math.random());
+              // this.speedy = (Math.random()*2-1)*Math.sqrt(FLY_SPEED**2 - this.speedx**2);
+              this.speedx += (Math.random()*2-1)*this.acclx * (0.01)
+              this.speedy += (Math.random()*2-1)*this.accly * (0.01)
             // console.log(this.speedx, this.speedy);
 
             // avoid edges
