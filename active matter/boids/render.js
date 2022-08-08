@@ -2,7 +2,6 @@ const flock = [];
 
 var url_string = window.location.href
 var url = new URL(url_string);
-console.log(url);
 
 // let alignSlider, cohesionSlider, separationSlider;
 let NUMBER_of_BOIDS = url.searchParams.get("N")|| 300 //N
@@ -13,9 +12,9 @@ let PI = Math.round(Math.PI*10000)/10000
 
 function setup() {
   createCanvas(window.innerWidth,window.innerHeight);
-  alignSlider = createSlider(0, 2, 1, 0.1);
-  cohesionSlider = createSlider(0, 2, 1, 0.1);
-  separationSlider = createSlider(0, 2, 1, 0.1);
+  // alignSlider = createSlider(0, 2, 1, 0.1);
+  // cohesionSlider = createSlider(0, 2, 1, 0.1);
+  // separationSlider = createSlider(0, 2, 1, 0.1);
   for (let i = 0; i < NUMBER_of_BOIDS; i++) {
     flock.push(new Boid());
   }
@@ -52,4 +51,11 @@ function draw() {
   stroke(0);
   text(fps.toFixed(2), width - 100, 50);
   // console.log(frameRate());
+
+  // call update plot function
+  // updatePlot(flock)
 }
+
+setInterval(() => {
+  updatePlot(flock)
+}, 100);

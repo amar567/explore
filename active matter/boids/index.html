@@ -7,9 +7,38 @@
     <title>Document</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.min.js" integrity="sha512-NxocnqsXP3zm0Xb42zqVMvjQIktKEpTIbCXXyhBPxqGZHqhcOXHs4pXI/GoZ8lE+2NJONRifuBpi9DxC58L0Lw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="./main.css">
-    <script src="boid.js"></script>
-    <script src="./sketch.js"></script>
+
+    <script src="https://cdn.plot.ly/plotly-latest.js"></script>
+
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js" integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js" integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous"></script> -->
+
 </head>
 <body>
+    <form>
+
+        <h1>Set Parameters</h1>
+
+        <input type="number" step="1" value="10000" name="N" id="N">
+        <label id="NLable" for="N">No of Boids: 10</label>
+        <br>
+        <input type="number" step="0.1" value="100" name="v" id="s">
+        <label id="sLable" for="v">Speed: 10</label>
+        <br>
+        <input type="number" step="1" value="100" name="L" id="R">
+        <label id="RLable" for="L">sigma: 10</label>
+        <br>
+        <input type="number" step="0.01" value="3.14" name="eta" id="eta">
+        <label id="etaLable" for="eta">sigma: 10</label>
+        <br>
+        <br>
+        <button type="submit">Start</button>
+    </form>
+    <div id="myDiv"></div>
+    <script src="./form.js"></script>
+    <script src="boid.js"></script>
+    <script src="./plot.js"></script>
+    <script src="./render.js"></script>
 </body>
 </html>
