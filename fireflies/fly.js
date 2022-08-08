@@ -81,6 +81,11 @@ class Fly {
   }
 
   show() {
+    // pushMatrix();
+    // translate(this.x,this.y);
+    // text("🪰",this.x,this.y);
+    // rotate( radians(Math.atan(this.speedx/this.speedy)))
+
       strokeWeight(8);
       if (this.blinkState === true) {
           stroke(255, 255, 0);

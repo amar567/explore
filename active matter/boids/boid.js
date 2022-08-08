@@ -1,17 +1,12 @@
-// Flocking
-// Daniel Shiffman
-// https://thecodingtrain.com/CodingChallenges/124-flocking-boids.html
-// https://youtu.be/mhjuuHl6qHM
-// https://editor.p5js.org/codingtrain/sketches/ry4XZ8OkN
-
 class Boid {
     constructor() {
       this.position = createVector(random(width), random(height));
-      this.velocity = p5.Vector.random2D();
-      this.velocity.setMag(random(2, 4));
-      this.acceleration = createVector();
-      this.maxForce = 1;
-      this.maxSpeed = 4;
+      this.theta = Math.random()*2*PI
+      this.velocity = createVector()
+      this.velocity.x = SPEED* Math.cos(this.theta)
+      this.velocity.y = SPEED* Math.sin(this.theta)
+
+      // console.log(this.theta,this.velocity);
     }
   
     edges() {
@@ -28,107 +23,72 @@ class Boid {
     }
 
     align(boids) {
-      let perceptionRadius = 50;
-      let steering = createVector();
-      let total = 0;
-      for (let other of boids) {
-        let d = dist(
-          this.position.x,
-          this.position.y,
-          other.position.x,
-          other.position.y
-        );
-        if (other != this && d < perceptionRadius) {
-          steering.add(other.velocity);
-          total++;
-        }
-      }
-      if (total > 0) {
-        steering.div(total);
-        steering.setMag(this.maxSpeed);
-        steering.sub(this.velocity);
-        steering.limit(this.maxForce);
-      }
-      return steering;
-    }
 
-    separation(boids) {
-      let perceptionRadius = 50;
-      let steering = createVector();
-      let total = 0;
-      for (let other of boids) {
-        let d = dist(
-          this.position.x,
-          this.position.y,
-          other.position.x,
-          other.position.y
-        );
-        if (other != this && d < perceptionRadius) {
-          let diff = p5.Vector.sub(this.position, other.position);
-          diff.div(d * d);
-          steering.add(diff);
-          total++;
-        }
-      }
-      if (total > 0) {
-        steering.div(total);
-        steering.setMag(this.maxSpeed);
-        steering.sub(this.velocity);
-        steering.limit(this.maxForce);
-      }
-      return steering;
-    }
+      let sum_of_sines = 0
+      let sum_of_cosines = 0
 
-    cohesion(boids) {
-      let perceptionRadius = 100;
-      let steering = createVector();
-      let total = 0;
-      for (let other of boids) {
-        let d = dist(
-          this.position.x,
-          this.position.y,
-          other.position.x,
-          other.position.y
-        );
-        if (other != this && d < perceptionRadius) {
-          steering.add(other.position);
-          total++;
-        }
+      for (let i = 0; i < boids.length; i++) {
+        sum_of_sines += Math.round(Math.sin(boids[i].theta)*10000)/10000
+        sum_of_cosines += Math.round(Math.cos(boids[i].theta)*10000)/10000
       }
-      if (total > 0) {
-        steering.div(total);
-        steering.sub(this.position);
-        steering.setMag(this.maxSpeed);
-        steering.sub(this.velocity);
-        steering.limit(this.maxForce);
+
+      let avg_of_sines = sum_of_sines/boids.length
+      let avg_of_cosines = sum_of_cosines/boids.length
+
+      let delta_theta = (Math.random() - 0.5) *DELTA_THETA_MAX  // η
+
+      // this.theta = Math.atan(avg_of_sines/avg_of_cosines) + delta_theta // equation 2 used here
+
+      // arctan according to the quadrant of avg sine and cosine fall in
+      if (avg_of_sines > 0 & avg_of_cosines > 0 ) {
+        this.theta = Math.atan(avg_of_sines/avg_of_cosines ) + delta_theta // equation 2 used here
       }
-      return steering;
+      if (avg_of_sines > 0 & avg_of_cosines < 0 ) {
+        this.theta = PI + Math.atan(avg_of_sines/avg_of_cosines ) + delta_theta // equation 2 used here
+      }
+      if (avg_of_sines < 0 & avg_of_cosines < 0 ) {
+        this.theta = PI + Math.atan(avg_of_sines/avg_of_cosines ) + delta_theta // equation 2 used here
+      }
+      if (avg_of_sines < 0 & avg_of_cosines > 0 ) {
+        this.theta = Math.atan(avg_of_sines/avg_of_cosines ) + delta_theta // equation 2 used here
+      }
+
+      this.velocity.x = SPEED* Math.cos(this.theta)
+      this.velocity.y = SPEED* Math.sin(this.theta)
+
     }
 
     flock(boids) {
-      let alignment = this.align(boids);
-      let cohesion = this.cohesion(boids);
-      let separation = this.separation(boids);
-  
-      alignment.mult(alignSlider.value());
-      cohesion.mult(cohesionSlider.value());
-      separation.mult(separationSlider.value());
-  
-      this.acceleration.add(alignment);
-      this.acceleration.add(cohesion);
-      this.acceleration.add(separation);
+
+      let neighbors = []
+
+      for (let other of boids) {
+        let d = dist(
+          this.position.x,
+          this.position.y,
+          other.position.x,
+          other.position.y
+        );
+        if (d<PERCEPTION_RADIUS) {
+          neighbors.push(other)          
+        }
+      }
+
+      if (neighbors.length>0) {
+
+        // alignment
+          this.align(neighbors)
+      }
     }
 
     update() {
       this.position.add(this.velocity);
-      this.velocity.add(this.acceleration);
-      this.velocity.limit(this.maxSpeed);
-      this.acceleration.mult(0);
     }
 
     show() {
       strokeWeight(8);
       stroke(255);
-      triangle(this.position.x-0.75, this.position.y,this.position.x+0.75, this.position.y,this.position.x, this.position.y-1.5);
+      let arrow = createVector(15*Math.cos(this.theta),15*Math.sin(this.theta))
+      drawArrow(this.position, arrow, 'white');
     }
   }
