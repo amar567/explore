@@ -25,7 +25,7 @@
     return Math.round(v_a/(N*SPEED)*1000000)/1000000
   }
 
-  let updatePlot = (flock)=>{
+  let updatePlot = (flock,n)=>{
     let v_a = va(flock)
     Plotly.extendTraces('myDiv', {
         y: [[v_a]]

@@ -82,7 +82,8 @@ class Boid {
     }
 
     update() {
-      this.position.add(this.velocity);
+      let next = createVector(this.velocity.x*0.1,this.velocity.y*0.1)
+      this.position.add(next);
     }
 
     show() {

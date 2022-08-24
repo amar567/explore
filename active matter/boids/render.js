@@ -1,4 +1,5 @@
 const flock = [];
+let epoch = 0
 
 var url_string = window.location.href
 var url = new URL(url_string);
@@ -9,12 +10,10 @@ let SPEED = url.searchParams.get("v")|| 5 // v
 let PERCEPTION_RADIUS = url.searchParams.get("L")|| 25  // L
 let DELTA_THETA_MAX = url.searchParams.get("eta")|| 0.1 // η
 let PI = Math.round(Math.PI*10000)/10000
+let SideLength = 500
 
 function setup() {
-  createCanvas(window.innerWidth,window.innerHeight);
-  // alignSlider = createSlider(0, 2, 1, 0.1);
-  // cohesionSlider = createSlider(0, 2, 1, 0.1);
-  // separationSlider = createSlider(0, 2, 1, 0.1);
+  createCanvas(1000,1000);
   for (let i = 0; i < NUMBER_of_BOIDS; i++) {
     flock.push(new Boid());
   }
@@ -43,19 +42,17 @@ function draw() {
     boid.update();
     boid.show();
   }
+  epoch +=1
+  updatePlot(flock)
   
-  // let fps = flock[1].theta;
+  // let fps = epoch;
   let fps = frameRate();
   textSize(30);
   fill(255);
   stroke(0);
   text(fps.toFixed(2), width - 100, 50);
-  // console.log(frameRate());
-
-  // call update plot function
-  // updatePlot(flock)
 }
 
-setInterval(() => {
-  updatePlot(flock)
-}, 100);
+// setInterval(() => {
+//   updatePlot(flock)
+// }, 100);

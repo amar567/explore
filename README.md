@@ -18,7 +18,12 @@ demo : [here](https://explore.amardeephk.xyz/coin%20toss)
 
 ## boids
 
-in progress...
+![coin_toss](./assets/boids.png "Title")
+
+code can be found [here](https://github.com/amar567/explore/tree/master/active%20matter/boids)
+
+demo : [here](https://explore.amardeephk.xyz/active%20matter/boids)
+
 
 ## double pendulum
 
