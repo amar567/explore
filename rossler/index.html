@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rossler</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
+    <script src="rossler.js"></script>
+    <script>
+
+        let convert = (list)=>{
+            let list_ = {
+                x:[],
+                y:[],
+                z:[]
+            }
+
+            for (let i = 0; i < list.length; i++) {
+                list_.x.push(list[i][0]);
+                list_.y.push(list[i][1]);
+                list_.z.push(list[i][2]);
+            }
+            return list_
+        }
+
+        // function addPlot(){
+        //     var url_string = window.location.href
+        //     var url = new URL(url_string);
+
+        //     var c1 = url.searchParams.get("c1") ||  0.576
+        //     var c1 = url.searchParams.get("c2") || 0.5747708
+        //     var c1 = url.searchParams.get("c3") || 0.5747701
+        //     var a = url.searchParams.get("a") ||  0.2
+        //     var b = url.searchParams.get("b") ||  0.3
+        //     var x0 = url.searchParams.get("x0") ||  1
+        //     var y0 = url.searchParams.get("y0") ||  1
+        //     var z0 = url.searchParams.get("z0") || 1
+        //     var l = url.searchParams.get("l") ||   16000
+        //     var dt = url.searchParams.get("dt") || 0.01
+
+        //     var c1 = getp("#c1")
+        //     var r = rosslerGenerator(getp("#a"),getp("#b"),c1,getp("#dt"));
+        //     var ps = trajectory(r,getp("#l"),[getp("#x0"),getp("#y0"),getp("#z0")]);
+        //     let list = convert(ps)
+
+        //     var x = list.x;
+        //     var y = list.y;
+        //     var z = list.z;
+
+        //     var c2 = getp("#c2")
+        //     var r2 = rosslerGenerator(getp("#a"),getp("#b"),c2,getp("#dt"));
+        //     var ps2 = trajectory(r2,getp("#l"),[getp("#x0"),getp("#y0"),getp("#z0")]);
+        //     let list2 = convert(ps2)
+
+        //     var x2 = list2.x;
+        //     var y2 = list2.y;
+        //     var z2 = list2.z;
+
+        //     var c3 = getp("#c3")
+        //     var r3 = rosslerGenerator(getp("#a"),getp("#b"),c3,getp("#dt"));
+        //     var ps3 = trajectory(r3,getp("#l"),[getp("#x0"),getp("#y0"),getp("#z0")]);
+        //     let list3 = convert(ps3)
+
+        //     var x3 = list3.x;
+        //     var y3 = list3.y;
+        //     var z3 = list3.z;
+
+        //     Plotit(x,x2,x3,y,y2,y3,z,z2,z3)
+
+        // }
+    
+        // function Plotit(x1,x2,x3,y1,y2,y3,z1,z2,z3) {
+        function addPlot(x1,x2,x3,y1,y2,y3,z1,z2,z3) {
+
+            // Plotly.newPlot('myDiv', [{
+            //     type: 'scatter3d',
+            //     mode: 'lines+markers',
+            //     x: x,
+            //     y: y,
+            //     z: z,
+            //     line: {
+            //         width: 6,
+            //         color: "blue",
+            //         colorscale: "Viridis"},
+            //     marker: {
+            //         size: 3.5,
+            //         color: "blue",
+            //         colorscale: "Greens",
+            //         cmin: -20,
+            //         cmax: 50
+            //     }},                  
+            // ]);
+
+            var c1 = getp("#c1")
+            var r = rosslerGenerator(getp("#a"),getp("#b"),c1,getp("#dt"));
+            var ps = trajectory(r,getp("#l"),[getp("#x0"),getp("#y0"),getp("#z0")]);
+            let list = convert(ps)
+
+            var x = list.x;
+            var y = list.y;
+            var z = list.z;
+
+            var c2 = getp("#c2")
+            var r2 = rosslerGenerator(getp("#a"),getp("#b"),c2,getp("#dt"));
+            var ps2 = trajectory(r2,getp("#l"),[getp("#x0"),getp("#y0"),getp("#z0")]);
+            let list2 = convert(ps2)
+
+            var x2 = list2.x;
+            var y2 = list2.y;
+            var z2 = list2.z;
+
+            var c3 = getp("#c3")
+            var r3 = rosslerGenerator(getp("#a"),getp("#b"),c3,getp("#dt"));
+            var ps3 = trajectory(r3,getp("#l"),[getp("#x0"),getp("#y0"),getp("#z0")]);
+            let list3 = convert(ps3)
+
+            var x3 = list3.x;
+            var y3 = list3.y;
+            var z3 = list3.z;
+
+            var trace1 = {
+                x: x,
+                y: y,
+                z: z,
+                mode: 'lines',
+                marker: {
+                    color: '#bcbd22',
+                    size: 12,
+                    symbol: 'circle',
+                    line: {
+                    color: 'rgb(0,0,0)',
+                    width: 0
+                    }},
+                line: {
+                    color: '#bcbd22',
+                    width: 2
+                },
+                type: 'scatter3d'
+                };
+
+            var trace2 = {
+                x: x2,
+                y: y2,
+                z: z2,
+                mode: 'lines',
+                marker: {
+                    color: '#1f77b4',
+                    size: 12,
+                    symbol: 'circle',
+                    line: {
+                    color: 'rgb(0,0,0)',
+                    width: 0
+                    }},
+                line: {
+                    color: '#1f77b4',
+                    width: 2
+                },
+                type: 'scatter3d'
+                };
+
+            var trace3 = {
+                x: x3,
+                y: y3,
+                z: z3,
+                mode: 'lines',
+                marker: {
+                    color: '#9467bd',
+                    size: 12,
+                    symbol: 'circle',
+                    line: {
+                    color: 'rgb(0,0,0)',
+                    width: 0
+                    }},
+                line: {
+                    color: 'rgb(160, 46, 44)',
+                    width: 2
+                },
+                type: 'scatter3d'
+                };
+
+                // var data = [trace1];
+                var data = [trace1,trace2,trace3];
+                var layout = {
+                title: '3D Line Plot',
+                autosize: false,
+                width: 1200,
+                height: 1000,
+                margin: {
+                    l: 0,
+                    r: 0,
+                    b: 0,
+                    t: 65
+                }
+                };
+                Plotly.newPlot('myDiv', data, layout);
+
+            // plotter.addPlot(ps);
+        }
+    
+    
+        function getp(n) {
+            return parseFloat($(n).val());
+        }
+
+        // he he 
+        $("#jst_form").submit(function(e) {
+            e.preventDefault();
+        });
+    
+    </script>
+</head>
+<body style="display:flex;">
+    <div id="myDiv" style="height: 100vh;width:100vw;"></div>
+
+    <!-- <form style="display:flex; flex-direction: column; justify-content: center; align-items: center; width: 40vw; " action="">
+        <input type="number" step="0.01" value="" name="a" id="a" >
+        <label id="sLable" for="a">a: 0.2</label>
+        <input type="number" step="0.01" value="" name="b" id="b">
+        <label id="bLable" for="b">b: 8/3</label>
+        <input type="number" step="0.1" value="" name="c" id="c" >
+        <label id="cLable" for="c">c: 5.7</label>
+
+        <input type="number" step="0.001" value="" name="dt" id="dt" >
+        <label id="dtLable" for="dt">step-size: 0.015</label>
+        <input type="number" step="1" value="" name="t" id="t">
+        <label id="tLable" for="t">max steps: 5000</label>
+        <input type="number" step="1" value="" name="traces" id="traces" >
+        <label id="tracesLable" for="traces">max number of trajectories: 10</label>
+        <br>
+        <button type="number">Plot</button>
+    </form> -->
+        <!-- <form style="display:flex; flex-direction: column; justify-content: center; align-items: center; width: 40vw; " action="">
+        <input type="number" step="0.01" value="" name="c1" id="c1" >
+        <label id="sLable" for="c1">c: 0.2</label>
+        <input type="number" step="0.01" value="" name="b" id="b">
+        <label id="bLable" for="b">b: 8/3</label>
+        <input type="number" step="0.1" value="" name="c" id="c" >
+        <label id="cLable" for="c">c: 5.7</label>
+
+        <br>
+        <button type="number">Plot</button>
+    </form> -->
+
+    <!-- 0.572194381 -->
+    <div id="jst_div" style="display:flex; flex-direction: column; justify-content: center; align-items: center; width: 40vw; " >
+
+        <!-- <input type="number" step="0.00001" name="c1" id="c1" value="0.576" > -->
+        <input type="number" step="0.0000001" name="c1" id="c1" value="0.5747728" >
+        <label for="c1" id="c1Value">c1</label>
+        <input type="number" step="0.0000001" name="c2" id="c2" value="0.5747708" >
+        <label for="c2" id="c2Value">c2</label>
+        <input type="number" step="0.0000001" name="c3" id="c3" value="0.5747701" >
+        <label for="c3" id="c3Value">c3</label>
+        <br>       
+        <br>
+        <input type="number" step="0.01" name="a" id="a" value="0.2" >
+        <label for="a">a</label>
+        <input type="number" step="0.01" name="b" id="b" value="0.3" >
+        <label for="b">b</label>
+        <br/>        
+        <br/>
+        <input type="number" step="0.1" name="x0" id="x0" value="1" >
+        <label for="x0">x0</label>
+        <input type="number" step="0.1" name="y0" id="y0" value="1" >
+        <label for="y0">y0</label>
+        <input type="number" step="0.1" name="z0" id="z0" value="1" >
+        <label for="z0">z0</label>
+        <br/>        
+        <br/>
+        <input type="number" step="1000" name="l" id="l" value="16000" >
+        <label for="l">steps</label>
+        <input type="number" step="0.001" name="dt" id="dt" value="0.01" >
+        <label for="dt">step length</label>
+        <br/>        
+        <br/>
+        <button onclick='addPlot();' type="number" >Go!</button>
+        <br/>        
+        <br/>
+    </div>
+
+    <!-- <div>
+        <input type="number" id="a" value="0.2" />
+        <input type="number" id="b" value="0.3" />
+        <input type="number" id="c" value="0.574775" />
+        <br />
+        <input type="number" id="x0" value="1" />
+        <input type="number" id="y0" value="1" />
+        <input type="number" id="z0" value="1" />
+        <br />
+        <input type="number" id="l" value="12000"/>
+        <input type="number" id="dt" value="0.01"/>
+        <button onclick='addPlot();' >Go!</button>
+        <br />
+    </div> -->
+
+    <script>
+        addPlot()
+    </script>
+
+    <!-- <script src="controls.js"></script> -->
+    <!-- <script src="plot.js"></script> -->
+</body>
+</html>
