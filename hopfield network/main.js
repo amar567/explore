@@ -27,7 +27,7 @@ function setup() {
   for (i = 0; i < columns; i++) {
     next[i] = new Array(rows);
   }
-  // init();
+  init();
 }
 
 function toggle(i, j) {
@@ -47,6 +47,7 @@ function draw() {
   background(255);
   if (evolve) {
     evolveNetwork()
+    updatePlot()
   }
   // generate();
   for (let i = 0; i < columns; i++) {
@@ -69,40 +70,15 @@ function reset() {
 function init() {
   for (let i = 0; i < columns; i++) {
     for (let j = 0; j < rows; j++) {
-      // Lining the edges with 0s
-      // if (i == 0 || j == 0 || i == columns - 1 || j == rows - 1) board[i][j] = 0;
-      // // Filling the rest randomly
-      // // else board[i][j] = floor(random(2));
-      // else board[i][j] = 0;
       board[i][j] = -1;
       next[i][j] = -1;
     }
   }
 
-  // let learnedImg = [
-  //   [1, 1, 1, 1, 1, 1, 1, -1, 1, 1, 1, -1, 1, 1, 1, 1],
-  //   [1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, 1, 1, 1, 1, 1],
-  //   [1, 1, 1, 1, 1, 1, 1, 1, -1, 1, -1, 1, 1, 1, 1, 1],
-  //   [1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, 1, 1, 1, 1, 1],
-  //   [1, 1, 1, 1, 1, -1, 1, -1, 1, 1, 1, -1, 1, 1, 1, 1],
-  //   [1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 1],
-  //   [1, 1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 1],
-  //   [1, 1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 1],
-  //   [1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, -1, -1, -1, 1],
-  //   [1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1],
-  //   [1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1],
-  //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, 1],
-  //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 1],
-  //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 1],
-  //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 1],
-  //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-  // ];
 
-  // ImgVector = imgToVector(learnedImg);
-  // learnHebbianWeights(ImgVector);
-  // console.log(WeightMatrix);
-
-  // console.log(vectorToImg(imgToVector(board)));
+  ImgVector = imgToVector(board)
+  // console.log(ImgVector);
+  learnHebbianWeights(ImgVector);
 }
 
 function randInput() {
@@ -114,39 +90,6 @@ function randInput() {
     }
   }
   // console.log(board);
-}
-
-setTimeout(() => {
-  // randInput()
-}, 300);
-
-// The process of creating the new generation
-function generate() {
-
-  // Loop through every spot in our 2D array and check spots neighbors
-  for (let x = 1; x < columns - 1; x++) {
-    for (let y = 1; y < rows - 1; y++) {
-      // Add up all the states in a 3x3 surrounding grid
-      let neighbors = 0;
-      for (let i = -1; i <= 1; i++) {
-        for (let j = -1; j <= 1; j++) { neighbors += board[x + i][y + j]; }
-      }
-
-      // A little trick to subtract the current cell's state since
-      // we added it in the above loop
-      neighbors -= board[x][y];
-      // Rules of Life
-      if ((board[x][y] == 1) && (neighbors < 2)) next[x][y] = -1;           // Loneliness
-      else if ((board[x][y] == 1) && (neighbors > 3)) next[x][y] = -1;           // Overpopulation
-      else if ((board[x][y] == 0) && (neighbors == 3)) next[x][y] = 1;           // Reproduction
-      else next[x][y] = board[x][y]; // Stasis
-    }
-  }
-
-  // Swap!
-  let temp = board;
-  board = next;
-  next = temp;
 }
 
 function imgToVector(arrayOfArrays) {
@@ -201,7 +144,7 @@ function learnHebbianWeights(imgVctr) {
     }
   }
 
-  console.log(WeightMatrix);
+  // console.log(WeightMatrix);
 
 }
 
@@ -223,6 +166,27 @@ function checkThresholdForActivation(index, imageVector, WeightMatrix) {
   } else {
     return (-1)
   }
+}
+
+function calculateEnergy() {
+
+  // console.log(ImgVector);
+  // console.log(WeightMatrix);
+
+  let imgVctr = imgToVector(board)
+
+  let summation = 0
+  for (let i = 0; i < imgVctr.length; i++) {
+    for (let j = 0; j < imgVctr.length; j++) {
+      // console.log(WeightMatrix[i][j] * imgVctr[i] * imgVctr[j]);
+      summation += WeightMatrix[i][j] * imgVctr[i] * imgVctr[j]
+    }
+    // console.log(summation);
+  }
+  // console.log(summation);
+  let energy = -(1 / 2) * summation
+
+  return energy
 }
 
 function evolveNetwork() {
@@ -247,13 +211,13 @@ function evolveNetwork() {
 }
 
 
-function learn(){
-  let ImgVector = imgToVector(board)
-  console.log(ImgVector);
+function learn() {
+  ImgVector = imgToVector(board)
+  // console.log(ImgVector);
   learnHebbianWeights(ImgVector);
 }
 
-function clear(){
+function clearcanvas() {
   for (let i = 0; i < columns; i++) {
     for (let j = 0; j < rows; j++) {
       // fill the board randomly
@@ -268,11 +232,54 @@ function fillrandom() {
     for (let j = 0; j < rows; j++) {
       // fill the board randomly
       board[i][j] = (floor(random(2)) == 1) ? 1 : -1
-      next[i][j] = -1;
     }
   }
 }
 
 function startStop(params) {
   evolve = !evolve
+  if (evolve) {
+    document.getElementById("startStopBtn").innerHTML = `Stop`
+  } else {
+    document.getElementById("startStopBtn").innerHTML = `Start`
+  }
 }
+
+
+
+Plotly.newPlot('myDiv', [{
+  y: [0],
+  mode: 'lines',
+  width: 800,
+  height: 600,
+  bargap: 0.05,
+  line: { color: '#80CAF6' }
+}],
+  {
+    yaxis: { title: 'Energy' },
+    xsaxis: { title: 'Frame No.' }
+  });
+
+function rand() {
+  return Math.random();
+}
+
+// let va = (flock)=>{
+//   let sum = createVector(0,0)
+//   for (let i = 0; i < flock.length; i++) {
+//       sum.add(flock[i].velocity)        
+//   }
+//   let v_a = Math.sqrt(sum.x**2,sum.y**2)
+//   return Math.round(v_a*10000000000000/(N*SPEED))/10000000000000
+// }
+
+let updatePlot = () => {
+  let E = calculateEnergy()
+  Plotly.extendTraces('myDiv', {
+    y: [[E]]
+  }, [0])
+  // console.log(E);
+  // return E
+}
+
+//   setInterval(updatePlot(flock),100) // flock is an array in render.js

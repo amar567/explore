@@ -17,12 +17,15 @@
 </head>
 <body>
 
-    
+    <div id="myDiv" style="position: absolute;left: 700px;"></div>
+
+    <!-- <script src="./plot.js"></script> -->
 
     <script src="./main.js"></script>
-    <button style="position: absolute;top: 700px;left: 160px;height: 30px;width: auto;" onclick="learn()">Learn current state</button>
-    <button style="position: absolute;top: 700px;left: 300px;height: 30px;width: auto;" onclick="fillrandom()">Random fill</button>
-    <button style="position: absolute;top: 700px;left: 400px;height: 30px;width: auto;" onclick="startStop()">start/stop</button>
-    <button style="position: absolute;top: 700px;left: 500px;height: 30px;width: auto;" onclick="clear()">clear canvas</button>
+
+    <button style="position: absolute;top: 700px;left: 160px;height: 30px;width: 140px;" onclick="learn()">Learn current state</button>
+    <button style="position: absolute;top: 700px;left: 300px;height: 30px;width: 100px;" onclick="fillrandom()">Random fill</button>
+    <button style="position: absolute;top: 700px;left: 400px;height: 30px;width: 100px;" onclick="startStop()" id="startStopBtn" >start</button>
+    <button style="position: absolute;top: 700px;left: 500px;height: 30px;width: 100px;" onclick="clearcanvas()">clear canvas</button>
 </body>
 </html>
