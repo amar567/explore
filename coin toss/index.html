@@ -108,10 +108,11 @@
     
     <script>
 
+        // get and set values from interactive part
+
         let n_iterations = 0 ;
         let tosses_per_iteration = url.searchParams.get("coinTossIterations") || 21;
         let p = url.searchParams.get("p") || 0.5;
-        let pVals = [];
 
         document.getElementById("pInp").value = p
 
@@ -129,23 +130,29 @@
 
         document.getElementById("iterations").value = tosses_per_iteration;
 
-        var trace1 = {
+        // plotting part
+
+        var trace1 = {  // experimental data
             x:[],
             y: [],
-            opacity: 0.5, 
-            type: "histogram", 
-            name: 'Count'
+            type: "bar", 
+            name: 'Count',
+            marker: {
+                color: 'rgb(0, 136, 255)'
+            }
         };
 
-        var trace2 = {
+        var trace2 = {  // therotically predicted
             x: [],
             y: [],
-            opacity: 0.5, 
-            type: "histogram",
-            name: 'Expected'
+            type: "bar",
+            name: 'Expected',
+            marker: {
+                color: 'rgb(255, 0, 0)'
+            }
         };
 
-        plotData = [trace1, trace2];
+        plotData = [trace1, trace2];    // we will plot both the traces
 
         var layout = {
             title: 'Coin toss experiment',
@@ -159,29 +166,32 @@
             height: 600,
             bargap: 0.05, 
             bargroupgap: 0.2, 
-            barmode: "overlay"
+            barmode: "group"
         };
 
+        // initializing the traces
         for (let i = 0; i <= tosses_per_iteration; i++) {
-            trace1.x.push("​" + i);
-            trace2.x.push("​" + i);
+            trace1.x.push(i);
+            trace2.x.push(i);
             trace1.y.push(0);
-            trace1.y.push(0);
+            trace2.y.push(0);
         }
 
+        // Plotly.newPlot('coinExp', [plotData]);
         Plotly.plot('coinExp', [plotData], layout);
 
+        // function that gives how many heads were observed per iteration
         let tossCoin = (tosses_per_iteration,p) => {
             count = 0
             for (let i = 0; i < tosses_per_iteration; i++) {
-                if (Math.floor(Math.random()/parseFloat((1-p).toFixed(2))) >= 1) {
+                if (Math.floor(Math.random()/parseFloat((1-p).toFixed(2))) >= 1) {  //
                     count++
                 }
             }
             return count
         }
 
-        function product_Range(a,b) {
+        function product_Range(a,b) {   // required in next function
             var prd = a,i = a;
             
             while (i++< b) {
@@ -191,19 +201,23 @@
         }
 
 
-        function combinations(n, k){
+        function combinations(n, k){    // n Choose k =  { n! / (k!*[n-k]!) }
             if (n==k || k==0){
                 return 1;
             } 
             else{
-                k=(k < n-k) ? n-k : k;
-                return product_Range(k+1, n)/product_Range(1,n-k);
+                let k_=(k < n-k) ? n-k : k;
+                return product_Range(k_+1, n)/product_Range(1,n-k_);
             }
         }
 
-        let prob =(n,p,k)=>{
+        let prob =(n,p,k)=>{    // probablity of getting k heads in n tosses
             return (combinations(n,k)*Math.pow(p,k)*Math.pow(1-p,n-k))
         }
+
+        // expected probablity distribution
+
+        let pVals = [];
 
         let calculateP = (n,p) => {
             for (let i = 0; i <= n; i++) {
@@ -211,6 +225,7 @@
             }
         }
 
+        // making expected vs observed table
         let makeTable = (tosses_per_iteration,p) => {
             let table = document.getElementById("table");
 
@@ -223,36 +238,39 @@
                 let cell3 = row.insertCell(2);
 
                 cell1.innerHTML = i;
-                cell2.innerHTML = trace1.y[i];
+                cell2.innerHTML = trace1.y[i];//observed value
                 cell2.id = "y" + i;
-                cell3.innerHTML = n_iterations*pVals[i];
+                cell3.innerHTML = n_iterations*pVals[i];//expected value
                 cell3.id = "yp" + i;
             }
-
-            console.log(pVals);
         }
 
         makeTable(tosses_per_iteration,p)
 
-        let updateTable = (i) => {
+        let updateTableAndTrace2 = (i) => {
             document.getElementById("y" + i).innerHTML = trace1.y[i];
 
             for (let j = 0; j <= tosses_per_iteration; j++) {
-                let pval = Math.round(n_iterations*pVals[j])
-                document.getElementById("yp" + j).innerHTML = pval;
-                trace2.y[i]=pval;
+                let expected = Math.round(n_iterations*pVals[j])
+                document.getElementById("yp" + j).innerHTML = expected;
+                trace2.y[j]=expected;
             }
         }
 
         let updateData = (tosses_per_iteration,p) => {
-            let result = tossCoin(tosses_per_iteration,p)
-            trace1.y[result]++
-            updateTable(result)
             n_iterations++
+            let result = tossCoin(tosses_per_iteration,p)   // find out no of heads in latest iteration
+            trace1.y[result]++  // add 1 to the no of times k heads were oberved
+            updateTableAndTrace2(result) // result here indicates k
             document.getElementById('count').innerHTML = n_iterations
         }
 
-        let iterate = setInterval(()=>{Plotly.restyle('coinExp', 'y', [trace2.y]);}, 300)
+        let updatePlot = ()=>{
+            let data = [trace1,trace2]
+            Plotly.newPlot('coinExp',data,layout);
+        }
+
+        let iterate = setInterval(()=>{updatePlot()}, 300)
 
         let plotIteration = setInterval(()=>{updateData(tosses_per_iteration,p)}, 0);
 
@@ -267,7 +285,7 @@
             }else{
                 button.className = "is-playing";
                 button.innerHTML = "▌▌";
-                iterate = setInterval(()=>{Plotly.restyle('coinExp', 'y', [trace1.y]);}, 300)
+                iterate = setInterval(()=>{updatePlot()}, 300)
                 plotIteration = setInterval(()=>{updateData(tosses_per_iteration,p)}, 0);
             }
 
