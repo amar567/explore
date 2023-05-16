@@ -4,11 +4,12 @@ let ypos = 0;
 let xpos = 0;
 let selectedIndex = null;
 let isDrawing = null;
+let frameTime = null
 
 // setup the p5 canvas 640x640 px where each pixel/neuron will be 40px wide 40px tall
 function setup() {
   // Set simulation framerate to 10 to avoid flickering
-  frameRate(1000);
+  frameRate(100);
   createCanvas(640, 640);
   w = 40;
   // Calculate columns and rows
@@ -61,11 +62,17 @@ function draw() {
       rect(i * w, j * w, w - 1, w - 1);
     }
   }
+
+  document.getElementById("fr").innerHTML = `Current frame rate: ${Math.round(1000/(Date.now() - frameTime))}`
+
+  frameTime = Date.now()
+
 }
 
 // reset board when mouse is pressed
 function reset() {
   (evolve) ? startStop() : null
+  selectedIndex = null
   Plotly.deleteTraces("myDiv", 0);
   init();
 }
