@@ -1,31 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.min.js" integrity="sha512-NxocnqsXP3zm0Xb42zqVMvjQIktKEpTIbCXXyhBPxqGZHqhcOXHs4pXI/GoZ8lE+2NJONRifuBpi9DxC58L0Lw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.min.js"
+        integrity="sha512-NxocnqsXP3zm0Xb42zqVMvjQIktKEpTIbCXXyhBPxqGZHqhcOXHs4pXI/GoZ8lE+2NJONRifuBpi9DxC58L0Lw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="./main.css">
 
     <script src="https://cdn.plot.ly/plotly-latest.js"></script>
 
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js" integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js" integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous"></script> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css"
+        integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
+
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js"
+        integrity="sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t"
+        crossorigin="anonymous"></script>
+
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js"
+        integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
 
 </head>
-<body>
 
+<body>
+    <div id='container' style="position: absolute;top: 0;  left: 0;"></div>
     <div id="myDiv" style="position: absolute;left: 700px;"></div>
+
+    <div id="" style="position: absolute;left: 700px;top: 500px;">
+        <!-- $${}$$ -->
+        <h3>Instructions</h3>
+        <ul>
+            <li>
+                Make a pattern by clicking anywhere on the grid.
+            </li>
+            <li>
+                Press "Learn current state" button (this will adjust the connection weights according to the current
+                state of the board)
+            </li>
+            <li>
+                Now you can press "Random fill" button and "Start" with with random initial state of the network.
+            </li>
+        </ul>
+        <!-- $$h^{23}$$ -->
+    </div>
+
+    <div style="position: absolute;top: 750px;margin-left: 20px;">
+        <h2>
+            Memory list
+        </h2>
+        <div id="memoryList" style="display: flex;flex-direction: row;flex-wrap: wrap;">
+            
+        </div>
+        <div id="" style="position: relative;">
+            <h1>
+                Hopfield Network
+            </h1>
+            $$h^{23}$$
+        </div>
+    </div>
 
     <!-- <script src="./plot.js"></script> -->
 
     <script src="./main.js"></script>
 
-    <button style="position: absolute;top: 700px;left: 160px;height: 30px;width: 140px;" onclick="learn()">Learn current state</button>
-    <button style="position: absolute;top: 700px;left: 300px;height: 30px;width: 100px;" onclick="fillrandom()">Random fill</button>
-    <button style="position: absolute;top: 700px;left: 400px;height: 30px;width: 100px;" onclick="startStop()" id="startStopBtn" >start</button>
-    <button style="position: absolute;top: 700px;left: 500px;height: 30px;width: 100px;" onclick="clearcanvas()">clear canvas</button>
+    <button style="position: absolute;top: 700px;left: 0px;height: 30px;width: 160px;" onclick="learn()">Learn current
+        state only</button><button style="position: absolute;top: 700px;left: 160px;height: 30px;width: 140px;"
+        onclick="learn()">Learn current
+        state</button>
+    <button style="position: absolute;top: 700px;left: 160px;height: 30px;width: 140px;" onclick="stackImg()">Add to
+        learned imgs</button>
+    <button style="position: absolute;top: 700px;left: 300px;height: 30px;width: 100px;" onclick="fillrandom()">Random
+        fill</button>
+    <button style="position: absolute;top: 700px;left: 400px;height: 30px;width: 100px;" onclick="startStop()"
+        id="startStopBtn">Start</button>
+    <button style="position: absolute;top: 700px;left: 500px;height: 30px;width: 100px;" onclick="clearcanvas()">clear
+        canvas</button>
+    <button style="position: absolute;top: 700px;left: 600px;height: 30px;width: 100px;" onclick="reset()">reset</button>
 </body>
+
 </html>

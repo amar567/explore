@@ -1,7 +1,5 @@
-let w, columns, rows, board, next, ImgVector, WeightMatrix, nOfImgs;// initialize some global variables
+let w,columns,rows,board,next,ImgVector,WeightMatrix,nOfImgs;// initialize some global variables
 let evolve = false;
-let ypos = 0
-let xpos = 0
 
 
 // setup the p5 canvas 640x640 px where each pixel/neuron will be 40px wide 40px tall
@@ -26,22 +24,18 @@ function setup() {
   init();
 }
 
-window.addEventListener("scroll", (event) => {
-  ypos = this.scrollY;
-  xpos = this.scrollX;
-});
 
 // toggle the state of neuron by clicking
 function toggle(i, j) {
-  if (i < columns & j < rows) {
+  if (i <= columns & j <= rows) {
     board[i][j] = ((board[i][j]) == 1) ? -1 : 1
   }
 }
 
 // 
 function touchStarted(event) {
-  let i = Math.floor((event.clientX + xpos) / w)
-  let j = Math.floor((event.clientY + ypos) / w)
+  let i = Math.floor(event.clientX / w)
+  let j = Math.floor(event.clientY / w)
   toggle(i, j)
 }
 
@@ -63,14 +57,13 @@ function draw() {
 
 // reset board when mouse is pressed
 function reset() {
-  startStop()
-  Plotly.deleteTraces("myDiv", 0);
+  // Plotly.deleteTraces("myDiv", 0);
   init();
 }
 
 // Fill board randomly
 function init() {
-  plotme()
+  // plotme()
   for (let i = 0; i < columns; i++) {
     for (let j = 0; j < rows; j++) {
       board[i][j] = -1;
@@ -141,7 +134,7 @@ function vectorToImg(imageVector) {
 
 function learnHebbianWeights(imgVctr) {
 
-  document.getElementById("memoryList").innerHTML = ""
+  document.getElementById("memoryList").innerHTML=""
 
   // update learned list
   updateLearnedList()
@@ -151,7 +144,8 @@ function learnHebbianWeights(imgVctr) {
 
   for (let i = 0; i < imgVctr.length; i++) {
     for (let j = 0; j < imgVctr.length; j++) {
-      WeightMatrix[i][j] = imgVctr[i] * imgVctr[j]
+      newWeight = imgVctr[i] * imgVctr[j]
+      WeightMatrix[i][j] = (WeightMatrix[i][j]*nOfImgs + newWeight)/(nOfImgs+1)
     }
   }
 
@@ -222,7 +216,7 @@ function updateLearnedList() {
   let data = canvasData.image
 
   memoryList.innerHTML += `
-    <img src="${canvasData}" style="width: 100px;margin:6px;">
+    <img src="${canvasData}" style="width: 100px;">
   `
 }
 
@@ -231,7 +225,7 @@ function learn() {
   learnHebbianWeights(ImgVector);
 }
 
-function stackImg() {
+function stackImg(){
 
   imgVctr = imgToVector(board)
 
@@ -240,12 +234,12 @@ function stackImg() {
   for (let i = 0; i < imgVctr.length; i++) {
     for (let j = 0; j < imgVctr.length; j++) {
       newWeight = imgVctr[i] * imgVctr[j]
-      WeightMatrix[i][j] = (WeightMatrix[i][j] * nOfImgs + newWeight) / (nOfImgs + 1)
+      WeightMatrix[i][j] = (WeightMatrix[i][j]*nOfImgs + newWeight)/(nOfImgs+1)
     }
   }
 
 
-  nOfImgs += 1
+  nOfImgs+=1
 }
 
 function clearcanvas() {
@@ -267,7 +261,7 @@ function fillrandom() {
   }
 }
 
-function startStop() {
+function startStop(params) {
   evolve = !evolve
   if (evolve) {
     document.getElementById("startStopBtn").innerHTML = `Stop`
@@ -278,7 +272,9 @@ function startStop() {
 
 
 
-function plotme() {
+// function plotme() {
+  
+// }
 
 Plotly.newPlot('myDiv', [{
   y: [0],
@@ -289,38 +285,36 @@ Plotly.newPlot('myDiv', [{
   line: { color: '#80CAF6' }
 }],
   {
-    title: {
-      text: 'Energy vs Time',
-      font: {
-        family: 'Courier New, monospace',
-        size: 24
-      },
-      // xref: 'paper',
-      // x: 0.05,
-    },
-    xaxis: {
       title: {
-        text: 'Epoch',
+        text:'Energy vs Time',
         font: {
           family: 'Courier New, monospace',
-          size: 18,
-          color: '#7f7f7f'
-        }
+          size: 24
+        },
+        // xref: 'paper',
+        // x: 0.05,
       },
-    },
-    yaxis: {
-      title: {
-        text: 'Energy',
-        font: {
-          family: 'Courier New, monospace',
-          size: 18,
-          color: '#7f7f7f'
+      xaxis: {
+        title: {
+          text: 'Epoch',
+          font: {
+            family: 'Courier New, monospace',
+            size: 18,
+            color: '#7f7f7f'
+          }
+        },
+      },
+      yaxis: {
+        title: {
+          text: 'Energy',
+          font: {
+            family: 'Courier New, monospace',
+            size: 18,
+            color: '#7f7f7f'
+          }
         }
       }
-    }
   });
-
-}
 
 let updatePlot = () => {
   let E = calculateEnergy()
