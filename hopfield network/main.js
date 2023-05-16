@@ -1,8 +1,8 @@
 let w, columns, rows, board, next, ImgVector, WeightMatrix, nOfImgs;// initialize some global variables
 let evolve = false;
-let ypos = 0
-let xpos = 0
-
+let ypos = 0;
+let xpos = 0;
+let selectedIndex = null;
 
 // setup the p5 canvas 640x640 px where each pixel/neuron will be 40px wide 40px tall
 function setup() {
@@ -55,7 +55,8 @@ function draw() {
     for (let j = 0; j < rows; j++) {
       if ((board[i][j] == 1)) fill(0);
       else fill(255);
-      stroke(0);
+      ((i*rows+j) === selectedIndex)? stroke(0,255,0):stroke(0);
+      ((i*rows+j) === selectedIndex)? strokeWeight(4):strokeWeight(1);
       rect(i * w, j * w, w - 1, w - 1);
     }
   }
@@ -63,7 +64,7 @@ function draw() {
 
 // reset board when mouse is pressed
 function reset() {
-  startStop()
+  (evolve)? startStop() : null
   Plotly.deleteTraces("myDiv", 0);
   init();
 }
@@ -197,6 +198,7 @@ function evolveNetwork() {
   // image to vector
   let newVector = imgToVector(board)
   let randomIndex = floor(random(newVector.length))
+  selectedIndex = randomIndex
 
   let initial = newVector[randomIndex]
 
@@ -216,8 +218,6 @@ function updateLearnedList() {
   // get image's base64 data
   let currentCanvas = document.getElementById("defaultCanvas0")
   let context = currentCanvas.getContext("2d")
-  // var imageData = context.getImageData(0, 0, 640, 640);
-  // let canvasData = currentCanvas.toDataURL()
   let canvasData = currentCanvas.toDataURL()
   let data = canvasData.image
 
@@ -294,9 +294,7 @@ Plotly.newPlot('myDiv', [{
       font: {
         family: 'Courier New, monospace',
         size: 24
-      },
-      // xref: 'paper',
-      // x: 0.05,
+      }
     },
     xaxis: {
       title: {
@@ -306,7 +304,7 @@ Plotly.newPlot('myDiv', [{
           size: 18,
           color: '#7f7f7f'
         }
-      },
+      }
     },
     yaxis: {
       title: {
