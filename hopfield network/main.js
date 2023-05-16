@@ -55,7 +55,7 @@ function draw() {
     for (let j = 0; j < rows; j++) {
       if ((board[i][j] == 1)) fill(0);
       else fill(255);
-      ((i*rows+j) === selectedIndex)? stroke(0,255,0):stroke(0);
+      ((i*rows+j) === selectedIndex)? stroke(0,255,0):stroke(50);
       ((i*rows+j) === selectedIndex)? strokeWeight(4):strokeWeight(1);
       rect(i * w, j * w, w - 1, w - 1);
     }
