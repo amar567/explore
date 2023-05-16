@@ -3,11 +3,12 @@ let evolve = false;
 let ypos = 0;
 let xpos = 0;
 let selectedIndex = null;
+let isDrawing = null;
 
 // setup the p5 canvas 640x640 px where each pixel/neuron will be 40px wide 40px tall
 function setup() {
   // Set simulation framerate to 10 to avoid flickering
-  frameRate(60);
+  frameRate(1000);
   createCanvas(640, 640);
   w = 40;
   // Calculate columns and rows
@@ -38,7 +39,7 @@ function toggle(i, j) {
   }
 }
 
-// 
+
 function touchStarted(event) {
   let i = Math.floor((event.clientX + xpos) / w)
   let j = Math.floor((event.clientY + ypos) / w)
@@ -55,8 +56,8 @@ function draw() {
     for (let j = 0; j < rows; j++) {
       if ((board[i][j] == 1)) fill(0);
       else fill(255);
-      ((i*rows+j) === selectedIndex)? stroke(0,255,0):stroke(50);
-      ((i*rows+j) === selectedIndex)? strokeWeight(4):strokeWeight(1);
+      ((i * rows + j) === selectedIndex) ? stroke(0, 255, 0) : stroke(50);
+      ((i * rows + j) === selectedIndex) ? strokeWeight(4) : strokeWeight(1);
       rect(i * w, j * w, w - 1, w - 1);
     }
   }
@@ -64,7 +65,7 @@ function draw() {
 
 // reset board when mouse is pressed
 function reset() {
-  (evolve)? startStop() : null
+  (evolve) ? startStop() : null
   Plotly.deleteTraces("myDiv", 0);
   init();
 }
@@ -94,6 +95,29 @@ function init() {
   nOfImgs = 0
   memoryList.innerHTML = `
   `
+
+  // Add the event listeners for mousedown, mousemove, and mouseup
+
+  let canvasElement = document.getElementById("defaultCanvas0");
+
+
+  canvasElement.addEventListener("mousedown", (e) => {
+    isDrawing = true;
+  });
+
+  canvasElement.addEventListener("mousemove", (e) => {
+    if (isDrawing) {
+      let i = Math.floor((e.clientX + xpos) / w)
+      let j = Math.floor((e.clientY + ypos) / w)
+      board[i][j] = 1
+    }
+  });
+
+  window.addEventListener("mouseup", (e) => {
+    if (isDrawing) {
+      isDrawing = false;
+    }
+  });
 }
 
 function randInput() {
@@ -280,43 +304,43 @@ function startStop() {
 
 function plotme() {
 
-Plotly.newPlot('myDiv', [{
-  y: [0],
-  mode: 'lines',
-  width: 800,
-  height: 800,
-  bargap: 0.05,
-  line: { color: '#80CAF6' }
-}],
-  {
-    title: {
-      text: 'Energy vs Time',
-      font: {
-        family: 'Courier New, monospace',
-        size: 24
-      }
-    },
-    xaxis: {
+  Plotly.newPlot('myDiv', [{
+    y: [0],
+    mode: 'lines',
+    width: 800,
+    height: 800,
+    bargap: 0.05,
+    line: { color: '#80CAF6' }
+  }],
+    {
       title: {
-        text: 'Epoch',
+        text: 'Energy vs Time',
         font: {
           family: 'Courier New, monospace',
-          size: 18,
-          color: '#7f7f7f'
+          size: 24
+        }
+      },
+      xaxis: {
+        title: {
+          text: 'Epoch',
+          font: {
+            family: 'Courier New, monospace',
+            size: 18,
+            color: '#7f7f7f'
+          }
+        }
+      },
+      yaxis: {
+        title: {
+          text: 'Energy',
+          font: {
+            family: 'Courier New, monospace',
+            size: 18,
+            color: '#7f7f7f'
+          }
         }
       }
-    },
-    yaxis: {
-      title: {
-        text: 'Energy',
-        font: {
-          family: 'Courier New, monospace',
-          size: 18,
-          color: '#7f7f7f'
-        }
-      }
-    }
-  });
+    });
 
 }
 
