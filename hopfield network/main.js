@@ -5,6 +5,9 @@ let xpos = 0;
 let selectedIndex = null;
 let isDrawing = null;
 let frameTime = null
+let frameNo = null
+let lastframeNo = 0
+let lastframeTime = 0
 
 // setup the p5 canvas 640x640 px where each pixel/neuron will be 40px wide 40px tall
 function setup() {
@@ -63,11 +66,16 @@ function draw() {
     }
   }
 
-  document.getElementById("fr").innerHTML = `Current frame rate: ${Math.round(1000/(Date.now() - frameTime))}`
-
+  frameNo += 1;
   frameTime = Date.now()
 
 }
+
+setInterval(() => {
+  document.getElementById("fr").innerHTML = `Current frame rate: ${Math.round((frameNo - lastframeNo)*1000/(frameTime-lastframeTime))}`
+  lastframeNo = frameNo
+  lastframeTime = Date.now()
+}, 200);
 
 // reset board when mouse is pressed
 function reset() {
@@ -253,7 +261,7 @@ function updateLearnedList() {
   let data = canvasData.image
 
   memoryList.innerHTML += `
-    <img src="${canvasData}" style="width: 100px;margin:6px;">
+    <img src="${canvasData}" style="width: 100px;padding:5px;">
   `
 }
 
@@ -314,8 +322,8 @@ function plotme() {
   Plotly.newPlot('myDiv', [{
     y: [0],
     mode: 'lines',
-    width: 800,
-    height: 800,
+    // width: 800,
+    // height: 800,
     bargap: 0.05,
     line: { color: '#80CAF6' }
   }],

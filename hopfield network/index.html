@@ -29,6 +29,7 @@
 </head>
 
 <body>
+    <!-- <h1>Hopfield Network</h1> -->
     <div id='container' style="position: absolute;top: 0;  left: 0;"></div>
     <div id="myDiv" style="position: absolute;left: 700px;"></div>
 
@@ -46,20 +47,27 @@
             <li>
                 Now you can press "Random fill" button and "Start" with with random initial state of the network.
             </li>
+            <li>
+                This is a simple application of <a href="https://en.wikipedia.org/wiki/Hopfield_network" target="_blank" rel="noopener noreferrer"><b>Hopfield Network</b></a>
+                <!-- , which serves as a model for understanding human memory. Here instead of storing data in the state of neurons, it is stored in connection weights between nuerons.
+                <br>
+                Hence this system can remember multiple states at same time, same as we see in human brain. -->
+
+            </li>
         </ul>
         <!-- $$h^{23}$$ -->
         <h3 id="fr"></h3>
     </div>
 
-    <div style="position: absolute;top: 750px;margin-left: 20px;">
-        <h2>
+    <div style="position: absolute;top: 750px;display: flex;flex-direction: column;flex-wrap: wrap;justify-content: center;width: 100vw;">
+        <h2 style="text-align: center;">
             Memory list
         </h2>
         <div id="memoryList" style="display: flex;flex-direction: row;flex-wrap: wrap;">
             
         </div>
-        <!-- <div id="" style="position: relative;">
-            <h1>
+        <!-- <div id="" style="position: relative;width: 100%;">
+            <h1 style="text-align: center;">
                 Hopfield Network
             </h1>
             $$h^{23}$$
