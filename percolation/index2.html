@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/addons/p5.dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/addons/p5.sound.min.js"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        *,
+        *::after,
+        *::before {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-block-size: 100vh;
+            display: grid;
+            place-content: center;
+        }
+
+        .slider-container {
+            --label: 2.75rem;
+            --width: clamp(20rem, calc(10.18rem + 43.64vw), 32rem);
+            --thumb: clamp(3rem, calc(2.28rem + 3.18vw), 3.88rem);
+            inline-size: var(--width);
+            aspect-ratio: 10.665 / 1;
+            display: grid;
+            position: relative;
+            padding-inline: var(--space);
+            border: 0;
+            border-radius: 100vh;
+            background: linear-gradient(to right,
+                    #fff9,
+                    #0000,
+                    hsl(203deg 21% 65%),
+                    #0001,
+                    #fff9);
+            box-shadow: #0002 0px 2px 1px, #0001 0px 4px 2px, #0001 0px 8px 4px,
+                #0001 0px 16px 8px, #0001 0px 26px 16px;
+        }
+
+        .number--label {
+            position: absolute;
+            top: -3rem;
+            left: -1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: var(--label);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            font-size: 1.75em;
+            transition: 366ms cubic-bezier(0.3, 0.6, 0.4, 1.125);
+            color: hsl(198deg 91% 45%);
+        }
+
+        .input-slider {
+            place-self: center;
+            border-radius: 100vh;
+            width: calc(var(--width) - 1rem);
+            height: min(2rem, 4vw);
+            background-color: hsl(198deg 41% 45%);
+            box-shadow: inset 0 2px 3px #0005, inset 0 -2px 2.5px 0.5px #fff3;
+            -webkit-appearance: none;
+            appearance: none;
+            outline: none;
+        }
+
+        .input-slider::-webkit-slider-thumb {
+            background: linear-gradient(to bottom,
+                    #fff 30%,
+                    hsl(192, 3%, 68%) 75%,
+                    hsl(192deg 3% 46%));
+            border-radius: 50%;
+            width: clamp(3rem, calc(2.28rem + 3.18vw), 3.88rem);
+            aspect-ratio: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            box-shadow: 0 -1px 5px 4px #fff7 inset, 0 1px 1.5px #0004, 0 2px 5px #0003,
+                0 5px 9px #0002;
+        }
+
+        .input-slider::-moz-range-thumb {
+            background: linear-gradient(to bottom,
+                    #fff 30%,
+                    hsl(192, 3%, 68%) 75%,
+                    hsl(192deg 3% 46%));
+            border-radius: 50%;
+            width: clamp(3rem, calc(2.28rem + 3.18vw), 3.88rem);
+            height: clamp(3rem, calc(2.28rem + 3.18vw), 3.88rem);
+            aspect-ratio: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            box-shadow: 0 -1px 5px 4px #fff7 inset, 0 1px 1.5px #0004, 0 2px 5px #0003,
+                0 5px 9px #0002;
+        }
+    </style>
+
+</head>
+</head>
+
+<body>
+
+    <div style="display: flex;flex-direction: row;">
+        <div id="canvasContainer"></div>
+        <div style="width: 30px;"></div>
+        <div class="range-slider"
+            style="height: 100%;display: flex;flex-direction: column;justify-content: center;align-items: center;">
+            <input type="range" min="0" max="1" value="0.50" step="0.001" class="input-slider" id="myRange"
+                oninput="this.nextElementSibling.value = this.value; replot(this.value)" orient="vertical"
+                class="slider" style="width: 400px;height: 20px;">
+            <output style="font-size: 50px;padding-top: 40px;">0.5</output>
+            <br>
+            <!-- <button type="submit" on >Replot</button> -->
+        </div>
+    </div>
+
+    <script>
+
+
+        canvas_size = localStorage.getItem("canvas_size") || 200
+
+
+        class Lattice_pt {
+
+            constructor(x, y) {
+                this.position = [x, y];
+                this.connections = [];
+                this.clusterName = "";
+                // console.log(this.position)
+            }
+
+            connect(height, width, probab_cutoff) {
+
+                // connect to pt to the left and below
+                // this.connected_to = []
+                // check if the point even exists
+                // form connection with given probablity
+                if (1 + this.position[0] < height & probab_cutoff > Math.random()) {
+                    // update the conneced points list in self
+                    this.connections.push([this.position[0] + 1, this.position[1]])
+                    list_of_lattice_pts[this.position[0] + 1][this.position[1]].update_connections(this.position[0], this.position[1])
+                }
+                if (1 + this.position[1] < width & probab_cutoff > Math.random()) {
+                    // update the connected points list in self
+                    this.connections.push([this.position[0], this.position[1] + 1])
+                    list_of_lattice_pts[this.position[0]][this.position[1] + 1].update_connections(this.position[0], this.position[1])
+                    // this.connected_to.push([this.position[0], this.position[1] + 1])
+                }
+
+                // if (this.connected_to.length === 0) {
+                //     this.clusterName = randomClusterName()
+                // }
+
+                // return (this.connected_to)
+                return
+            }
+
+            update_connections(i, j) {
+                this.connections.push([i, j])
+                return
+            }
+
+            update_clustername(name) {
+                // update the name
+                this.clusterName = name
+                return
+            }
+        }
+
+        // initialize and make connctions
+
+        // for loop to create list of alll the pionts
+        canvas_height = canvas_size
+        canvas_width = canvas_size
+        // canvas_height = 640
+        // canvas_width = 360
+        p_value = 0.5
+        max_callstack_depth = 20
+        let changed
+
+        let list_of_lattice_pts
+
+        // for (let i = 0; i < canvas_height; i++) {
+        //     for (let j = 0; j < canvas_width; j++) {
+        //         const new_point = new Lattice_pt(i, j);
+        //         list_of_lattice_pts[i][j] = new_point;
+        //     }
+        // }
+
+        // loop over all canvas points to segregate them by cluster name
+        let cluster_list = {}
+
+        function replot(new_p_value) {
+
+        const startTime = Date.now();
+
+
+            console.log('plotting for ', new_p_value);
+            changed = true
+
+            list_of_lattice_pts = [...Array(canvas_height)].map(e => Array(canvas_width));
+
+            for (let i = 0; i < canvas_height; i++) {
+                for (let j = 0; j < canvas_width; j++) {
+                    const new_point = new Lattice_pt(i, j);
+                    list_of_lattice_pts[i][j] = new_point;
+                }
+            }
+
+            //  for loop to perform connection
+            list_of_lattice_pts.forEach(row => {
+                row.forEach(point => {
+                    // console.log('hi');
+                    point.connect(canvas_height, canvas_width, new_p_value)
+
+                    // to_be_connected = point.connect(canvas_height, canvas_width)
+                    // to_be_connected.forEach(element => {
+                    //     list_of_lattice_pts[`${element[0]}`][`${element[1]}`].update_connections(point.position[0], point.position[1])
+                    // });
+                })
+            })
+
+            // cluster them in groups
+            callstack_depth = 0
+
+            // define a function which takes postions of connections as input
+            function cluster(list_of_connections, currentClusterName) {
+
+                list_of_connections.forEach(element => {
+                    callstack_depth += 1
+                    if (callstack_depth > max_callstack_depth) {
+                        console.log(callstack_depth);
+                    }
+                    // first check if obj has cluster name if it's there do noting 
+                    if (list_of_lattice_pts[`${element[0]}`][`${element[1]}`].clusterName != "") {
+                        if (callstack_depth > max_callstack_depth) {
+                            max_callstack_depth = callstack_depth
+                            console.log(callstack_depth);
+                        }
+                        callstack_depth = 0
+                        return
+                    }
+
+                    // else call fn inside fn and pass all the connections points objects to the function 
+                    else {
+                        // assign clustername
+                        list_of_lattice_pts[`${element[0]}`][`${element[1]}`].update_clustername(currentClusterName)
+                        // call recursice function
+                        cluster(list_of_lattice_pts[`${element[0]}`][`${element[1]}`].connections, currentClusterName)
+                    }
+                });
+            }
+
+            function randomClusterName() {
+                return (Math.random() + 1).toString(36).substring(7)
+            }
+
+            // loop over all canvas points
+            list_of_lattice_pts.forEach(row => {
+                row.forEach(point => {
+                    if (point.clusterName === "") {
+                        clusterName = randomClusterName()
+                        // call the above function
+                        if (point.connections.length === 0) {
+                            point.clusterName = clusterName
+                        } else {
+                            cluster(point.connections, clusterName)
+                        }
+                    }
+                })
+            });
+
+
+            // loop over all canvas points to segregate them by cluster name
+            cluster_list = {}
+
+
+            // loop over all canvas points
+            list_of_lattice_pts.forEach(row => {
+                row.forEach(point => {
+                    clusterName = point.clusterName
+                    if (cluster_list[clusterName]) {
+                        cluster_list[clusterName].push(point)
+                    } else {
+                        cluster_list[clusterName] = []
+                        cluster_list[clusterName].push(point)
+                    }
+                })
+            });
+
+
+        const endTime = Date.now();
+        const elapsedTime = endTime - startTime;
+        console.log(`Time req for: ${canvas_height} x ${canvas_width} with p value: ${new_p_value} is =`, elapsedTime / 1000, "sec");
+
+
+        }
+
+        replot(p_value)
+
+        function generateRandomRGB() {
+            // Generate random values for red, green, and blue
+            var red = Math.floor(Math.random() * 245);
+            var green = Math.floor(Math.random() * 245);
+            var blue = Math.floor(Math.random() * 245);
+
+            // Construct the RGB string
+            var rgbValue = [red, green, blue];
+            // console.log(rgbValue);
+            return rgbValue;
+        }
+
+
+        // function setup() {
+        //     scale = 10
+        //     r = scale * 1.19 / 12
+        //     offset = 30 * scale / 12
+        //     canvas = createCanvas(canvas_height * scale + 2 * offset, canvas_width * scale + 2 * offset);
+        //     canvas.parent('canvasContainer')
+
+        //     background(245);
+
+        //     // for (const cluster_name_ in cluster_list) {
+
+        //     //     // Call the function to get a random RGB value
+        //     //     var randomColor = generateRandomRGB();
+
+        //     //     cluster_list[cluster_name_].forEach(point => {
+        //     //         // console.log(point);
+        //     //         // point.connections.forEach(connection => {
+        //     //         //     // circle(30, 30, 20);
+        //     //         //     // ellipse(point.position[0]*scale+offset, point.position[1]*scale+offset,r*scale,r*scale);
+        //     //         //     // ellipse( list_of_lattice_pts[connection[0]][connection[1]].position[0]*scale+offset, list_of_lattice_pts[connection[0]][connection[1]].position[1]*scale+offset,r*scale,r*scale)
+        //     //         //     strokeWeight(4);
+        //     //         //     stroke(randomColor[0], randomColor[1], randomColor[2])
+        //     //         //     line(point.position[0] * scale + offset, point.position[1] * scale + offset, list_of_lattice_pts[connection[0]][connection[1]].position[0] * scale + offset, list_of_lattice_pts[connection[0]][connection[1]].position[1] * scale + offset);
+        //     //         //     fill(randomColor)
+        //     //         //     // noStroke();
+        //     //         //     ellipse(point.position[0] * scale + offset, point.position[1] * scale + offset, r * scale * 0.3, r * scale * 0.3);
+        //     //         // });
+
+        //     //         // fill(randomColor)
+        //     //         // noStroke();
+        //     //         // rectMode(CENTER);
+        //     //         // // rectMode(RADIUS);
+        //     //         // rect(point.position[0] * scale + offset, point.position[1] * scale + offset, r * scale, r * scale);
+        //     //     });
+        //     //     // if (Object.hasOwnProperty.call(cluster_list, cluster_name_)) {
+        //     //     //     const element = cluster_list[cluster_name_];
+
+        //     //     // }
+        //     // }
+
+        // }
+
+
+        // function draw() {
+        //     if (changed) {
+        //         changed = false
+        //         clear()
+        //         for (const cluster_name_ in cluster_list) {
+
+        //             // Call the function to get a random RGB value
+        //             var randomColor = generateRandomRGB();
+
+        //             cluster_list[cluster_name_].forEach(point => {
+        //                 // point.connections.forEach(connection => {
+        //                 //     strokeWeight(4);
+        //                 //     stroke(randomColor[0], randomColor[1], randomColor[2])
+        //                 //     line(point.position[0] * scale + offset, point.position[1] * scale + offset, list_of_lattice_pts[connection[0]][connection[1]].position[0] * scale + offset, list_of_lattice_pts[connection[0]][connection[1]].position[1] * scale + offset);
+        //                 //     fill(randomColor)
+        //                 //     ellipse(point.position[0] * scale + offset, point.position[1] * scale + offset, r * scale * 0.3, r * scale * 0.3);
+        //                 // });
+        //                 fill(randomColor)
+        //                 noStroke();
+        //                 rectMode(CENTER);
+        //                 rect(point.position[0] * scale + offset, point.position[1] * scale + offset, r * scale, r * scale);
+        //             });
+        //         }
+        //     }
+        // }
+
+
+    </script>
+</body>
+
+</html>

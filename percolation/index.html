@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/addons/p5.dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/addons/p5.sound.min.js"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
+</head>
+</head>
+
+<body>
+    <script>
+        const startTime = Date.now();
+
+        class Lattice_pt {
+
+            constructor(x, y) {
+                this.position = [x, y];
+                this.connections = [];
+                this.clusterName = "";
+                this.toBeCombined = [];
+            }
+
+            connect(height, width) {
+
+                // connect to pt to the left and below
+                // check if the point even exists
+                // form connection with given probablity
+                if (this.clusterName === "") {
+                    this.clusterName = randomClusterName()
+                    cluster_list[this.clusterName] = []
+                    cluster_list[this.clusterName].push(list_of_lattice_pts[this.position[0]][this.position[1]])
+                }
+                // self
+                this.toBeCombined.push(this.clusterName)
+                // below
+                if (1 + this.position[0] < height & p_value > Math.random()) {
+                    // update the conneced points list in self and other
+                    this.connections.push([this.position[0] + 1, this.position[1]])
+                    list_of_lattice_pts[this.position[0] + 1][this.position[1]].update_connections(this.position[0], this.position[1])
+                    list_of_lattice_pts[this.position[0] + 1][this.position[1]].update_clustername(this.clusterName)
+                    cluster_list[this.clusterName].push(list_of_lattice_pts[this.position[0] + 1][this.position[1]])
+
+                }
+                // right
+                if (1 + this.position[1] < width & p_value > Math.random()) {
+                    // update the conneced points list in self and other
+                    this.connections.push([this.position[0], this.position[1] + 1])
+                    list_of_lattice_pts[this.position[0]][this.position[1] + 1].update_connections(this.position[0], this.position[1])
+
+                    if (list_of_lattice_pts[this.position[0]][this.position[1] + 1].clusterName === "") {
+                        list_of_lattice_pts[this.position[0]][this.position[1] + 1].update_clustername(this.clusterName)
+                        cluster_list[this.clusterName].push(list_of_lattice_pts[this.position[0]][this.position[1] + 1])
+                    }
+                    else if (this.toBeCombined[0] === list_of_lattice_pts[this.position[0]][this.position[1] + 1].clusterName) {
+                        return (this.toBeCombined)
+                    }
+                    else {
+                        this.toBeCombined.push(list_of_lattice_pts[this.position[0]][this.position[1] + 1].clusterName)
+                    }
+                }
+
+                return (this.toBeCombined)
+
+            }
+
+            update_connections(i, j) {
+                this.connections.push([i, j])
+            }
+
+            update_clustername(name) {
+                // update the name
+                this.clusterName = name
+            }
+
+            assign_color(array) {
+                this.color = array
+            }
+        }
+
+
+        // initialize and make connctions
+
+        // for loop to create list of alll the pionts
+        canvas_height = 400
+        canvas_width = 400
+        p_value = .5
+        let list_of_lattice_pts = [...Array(canvas_height)].map(e => Array(canvas_width));
+
+        for (let i = 0; i < canvas_height; i++) {
+            for (let j = 0; j < canvas_width; j++) {
+                const new_point = new Lattice_pt(i, j);
+                list_of_lattice_pts[i][j] = new_point;
+            }
+        }
+
+        // loop over all canvas points to segregate them by cluster name
+        cluster_list = {}
+        remove_list = []
+
+        list_of_lattice_pts.forEach(row => {
+            row.forEach(point => {
+
+                connected_clusters = point.connect(canvas_height, canvas_width)
+                if (connected_clusters.length > 1) {
+                    newName = randomClusterName()
+                    cluster_list[newName] = []
+                    cluster_list[newName] = [...cluster_list[connected_clusters[0]],...cluster_list[connected_clusters[1]]]
+
+                    cluster_list[newName].forEach(inner_point => {
+                        list_of_lattice_pts[inner_point.position[0]][inner_point.position[1]].update_clustername(newName)
+                    });
+
+                    if (!remove_list.includes(connected_clusters[0])) {
+                        remove_list.push(connected_clusters[0])
+                    }
+                    if (!remove_list.includes(connected_clusters[1])) {
+                        remove_list.push(connected_clusters[1])
+                    }
+
+                    // delete cluster_list[connected_clusters[0]]
+                    // delete cluster_list[connected_clusters[1]]
+                }
+            })
+        })
+
+        remove_list.forEach(element => {
+            delete cluster_list[element]
+        });
+
+        function randomClusterName() {
+            return (Math.random() + 1).toString(36).substring(7)
+        }
+
+        // draw clusters
+
+        function componentToHex(c) {
+            var hex = c.toString(16);
+            return hex.length == 1 ? "0" + hex : hex;
+        }
+
+
+        function generateRandomRGB() {
+            // Generate random values for red, green, and blue
+            var red = Math.floor(Math.random() * 245);
+            var green = Math.floor(Math.random() * 245);
+            var blue = Math.floor(Math.random() * 245);
+
+            // Construct the RGB string
+            var rgbValue = [red, green, blue];
+            return rgbValue;
+        }
+
+        cluster_color_list = {}
+
+        for (const cluster_name_ in cluster_list) {
+            let [r, g, b] = generateRandomRGB()
+            cluster_color_list[cluster_name_] = [r,g,b]
+            // console.log(`%c ${cluster_name_}: ${cluster_list[cluster_name_].length}`, `color:${"#" + componentToHex(r) + componentToHex(g) + componentToHex(b)}`);
+        }
+
+
+        const endTime = Date.now();
+        const elapsedTime = endTime - startTime;
+        console.log(`Time req for: ${canvas_height} x ${canvas_width} with p value: ${p_value} is =`,elapsedTime/1000,"sec \n ye le bitch!");
+
+        const startTime2 = Date.now()
+
+        function setup() {
+            scale = 10
+            r = scale * 0.1/12
+            offset = scale/2 + 10
+            stroke_weight = scale *4/12
+
+            createCanvas(canvas_width * scale + 2 * offset, canvas_height * scale + 2 * offset);
+            background(245);
+
+            for (const cluster_name_ in cluster_list) {
+
+                // Call the function to get a random RGB value
+                var clusterColor = cluster_color_list[cluster_name_];
+
+                cluster_list[cluster_name_].forEach(point => {
+                    stroke(clusterColor[0], clusterColor[1], clusterColor[2])
+                    strokeWeight(stroke_weight);
+                    point.connections.forEach(connection => {
+                        line(point.position[1] * scale + offset,point.position[0] * scale + offset, connection[1] * scale + offset, connection[0] * scale + offset);
+                    });
+                });
+            }
+
+            iter = 0
+            list_of_lattice_pts.forEach(row => {
+                row.forEach(point => {
+                    // console.log(point);
+                    try {
+                        clusterColor = cluster_color_list[point.clusterName]
+                        stroke(clusterColor[0], clusterColor[1], clusterColor[2])
+                        ellipse( point.position[1] * scale + offset, point.position[0] * scale + offset, r * scale, r * scale);
+                        iter += 1
+                    } catch (error) {
+                        // console.log(iter);
+                        // console.log(row);
+                        // console.log(error);
+                    }
+                });
+            })
+
+        }
+
+        const endTime2 = Date.now();
+        const elapsedTime2 = endTime2 - startTime2;
+        console.log(`Time req for drawing is =`,elapsedTime2/1000,"sec \n ye le bitch!");
+
+
+        // // function draw() {
+        // // }
+
+
+    </script>
+</body>
+
+</html>
