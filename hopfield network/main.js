@@ -16,7 +16,7 @@ function setup() {
   w = 40;
   columns = floor(width / w);
   rows = floor(height / w);
-  
+
   // Initialize the board and next arrays
   board = new Array(columns);
   for (let i = 0; i < columns; i++) {
@@ -26,7 +26,7 @@ function setup() {
   for (let i = 0; i < columns; i++) {
     next[i] = new Array(rows);
   }
-  
+
   init(); // Initialize the board and other elements
 }
 
@@ -132,6 +132,56 @@ function init() {
       isDrawing = false;
     }
   });
+
+
+  // Set up touch events for mobile, etc
+  canvasElement.addEventListener("touchstart", function (e) {
+    mousePos = getTouchPos(canvasElement, e);
+    var touch = e.touches[0];
+    var mouseEvent = new MouseEvent("mousedown", {
+      clientX: touch.clientX,
+      clientY: touch.clientY
+    });
+    canvasElement.dispatchEvent(mouseEvent);
+  }, false);
+  canvasElement.addEventListener("touchend", function (e) {
+    var mouseEvent = new MouseEvent("mouseup", {});
+    canvasElement.dispatchEvent(mouseEvent);
+  }, false);
+  canvasElement.addEventListener("touchmove", function (e) {
+    var touch = e.touches[0];
+    var mouseEvent = new MouseEvent("mousemove", {
+      clientX: touch.clientX,
+      clientY: touch.clientY
+    });
+    canvasElement.dispatchEvent(mouseEvent);
+  }, false);
+
+  // Get the position of a touch relative to the canvasElement
+  function getTouchPos(canvasElementDom, touchEvent) {
+    var rect = canvasElementDom.getBoundingClientRect();
+    return {
+      x: touchEvent.touches[0].clientX - rect.left,
+      y: touchEvent.touches[0].clientY - rect.top
+    };
+  }
+
+  // Prevent scrolling when touching the canvasElement
+  document.body.addEventListener("touchstart", function (e) {
+    if (e.target == canvasElement) {
+      e.preventDefault();
+    }
+  }, false);
+  document.body.addEventListener("touchend", function (e) {
+    if (e.target == canvasElement) {
+      e.preventDefault();
+    }
+  }, false);
+  document.body.addEventListener("touchmove", function (e) {
+    if (e.target == canvasElement) {
+      e.preventDefault();
+    }
+  }, false);
 }
 
 // Randomize the board
@@ -284,35 +334,35 @@ function plotme() {
     bargap: 0.05,
     line: { color: '#80CAF6' }
   }],
-  {
-    title: {
-      text: 'Energy vs Time',
-      font: {
-        family: 'Courier New, monospace',
-        size: 24
-      }
-    },
-    xaxis: {
+    {
       title: {
-        text: 'Epoch',
+        text: 'Energy vs Time',
         font: {
           family: 'Courier New, monospace',
-          size: 18,
-          color: '#7f7f7f'
+          size: 24
+        }
+      },
+      xaxis: {
+        title: {
+          text: 'Epoch',
+          font: {
+            family: 'Courier New, monospace',
+            size: 18,
+            color: '#7f7f7f'
+          }
+        }
+      },
+      yaxis: {
+        title: {
+          text: 'Energy',
+          font: {
+            family: 'Courier New, monospace',
+            size: 18,
+            color: '#7f7f7f'
+          }
         }
       }
-    },
-    yaxis: {
-      title: {
-        text: 'Energy',
-        font: {
-          family: 'Courier New, monospace',
-          size: 18,
-          color: '#7f7f7f'
-        }
-      }
-    }
-  });
+    });
 }
 
 // Update the plot with the current energy value

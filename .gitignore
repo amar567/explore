@@ -2,3 +2,5 @@ SOME
 
 fireflies/*.pdf
 fireflies/*.mp4
+
+.gitignore

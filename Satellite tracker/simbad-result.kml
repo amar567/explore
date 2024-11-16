@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2" hint="target=sky">
+<Document>
+		<Style id="defaultStyle">
+	<BalloonStyle>
+		<text><table width="240"><tr><td align="center" colspan="2"><a href="http://simbad.u-strasbg.fr/"><img src="http://cdsweb.u-strasbg.fr/Icons/simbad_icon.gif" /></a></td></tr><tr><td align="center" colspan="2"><b>$[name]</b><br/></td></tr>$[description]</table></text>
+	</BalloonStyle>
+	</Style>
+
+	<Style id="galaxyStyle">
+	<IconStyle>
+		<Icon><href>http://cdsweb.u-strasbg.fr/googlesky-pages/icons/icon_galaxy4.png</href></Icon>
+	</IconStyle>
+	<BalloonStyle>
+		<text><table width="240"><tr><td align="center" colspan="2"><a href="http://simbad.u-strasbg.fr/"><img src="http://cdsweb.u-strasbg.fr/Icons/simbad_icon.gif" /></a></td></tr><tr><td align="center" colspan="2"><b>$[name]</b><br/></td></tr>$[description]</table></text>
+	</BalloonStyle>
+	</Style>
+
+	<Style id="starStyle">
+	<IconStyle>
+		<color>8cffffff</color>
+		<Icon><href>http://cdsweb.u-strasbg.fr/googlesky-pages/icons/icon_star.png</href></Icon>
+	</IconStyle>
+	<BalloonStyle>
+		<text><table width="240"><tr><td align="center" colspan="2"><a href="http://simbad.u-strasbg.fr/"><img src="http://cdsweb.u-strasbg.fr/Icons/simbad_icon.gif" /></a></td></tr><tr><td align="center" colspan="2"><b>$[name]</b><br/></td></tr>$[description]</table></text>
+	</BalloonStyle>
+	</Style>
+
+	<Style id="starStyleB">
+	<IconStyle>
+		<color>8cffffff</color>
+		<Icon><href>http://cdsweb.u-strasbg.fr/googlesky-pages/icons/icon_star_blue_violet.png</href></Icon>
+	</IconStyle>
+	<BalloonStyle>
+		<text><table width="240"><tr><td align="center" colspan="2"><a href="http://simbad.u-strasbg.fr/"><img src="http://cdsweb.u-strasbg.fr/Icons/simbad_icon.gif" /></a></td></tr><tr><td align="center" colspan="2"><b>$[name]</b><br/></td></tr>$[description]</table></text>
+	</BalloonStyle>
+	</Style>
+
+	<Style id="starStyleA">
+	<IconStyle>
+		<color>8cffffff</color>
+		<Icon><href>http://cdsweb.u-strasbg.fr/googlesky-pages/icons/icon_star_blue.png</href></Icon>
+	</IconStyle>
+	<BalloonStyle>
+		<text><table width="240"><tr><td align="center" colspan="2"><a href="http://simbad.u-strasbg.fr/"><img src="http://cdsweb.u-strasbg.fr/Icons/simbad_icon.gif" /></a></td></tr><tr><td align="center" colspan="2"><b>$[name]</b><br/></td></tr>$[description]</table></text>
+	</BalloonStyle>
+	</Style>
+
+	<Style id="starStyleF">
+	<IconStyle>
+		<color>8cffffff</color>
+		<Icon><href>http://cdsweb.u-strasbg.fr/googlesky-pages/icons/icon_star_green_yellow.png</href></Icon>
+	</IconStyle>
+	<BalloonStyle>
+		<text><table width="240"><tr><td align="center" colspan="2"><a href="http://simbad.u-strasbg.fr/"><img src="http://cdsweb.u-strasbg.fr/Icons/simbad_icon.gif" /></a></td></tr><tr><td align="center" colspan="2"><b>$[name]</b><br/></td></tr>$[description]</table></text>
+	</BalloonStyle>
+	</Style>
+
+	<Style id="starStyleG">
+	<IconStyle>
+		<color>8cffffff</color>
+		<Icon><href>http://cdsweb.u-strasbg.fr/googlesky-pages/icons/icon_star_yellow.png</href></Icon>
+	</IconStyle>
+	<BalloonStyle>
+		<text><table width="240"><tr><td align="center" colspan="2"><a href="http://simbad.u-strasbg.fr/"><img src="http://cdsweb.u-strasbg.fr/Icons/simbad_icon.gif" /></a></td></tr><tr><td align="center" colspan="2"><b>$[name]</b><br/></td></tr>$[description]</table></text>
+	</BalloonStyle>
+	</Style>
+
+	<Style id="starStyleK">
+	<IconStyle>
+		<color>8cffffff</color>
+		<Icon><href>http://cdsweb.u-strasbg.fr/googlesky-pages/icons/icon_star_orange.png</href></Icon>
+	</IconStyle>
+	<BalloonStyle>
+		<text><table width="240"><tr><td align="center" colspan="2"><a href="http://simbad.u-strasbg.fr/"><img src="http://cdsweb.u-strasbg.fr/Icons/simbad_icon.gif" /></a></td></tr><tr><td align="center" colspan="2"><b>$[name]</b><br/></td></tr>$[description]</table></text>
+	</BalloonStyle>
+	</Style>
+
+	<Style id="starStyleMRNSC">
+	<IconStyle>
+		<color>8cffffff</color>
+		<Icon><href>http://cdsweb.u-strasbg.fr/googlesky-pages/icons/icon_star_red.png</href></Icon>
+	</IconStyle>
+	<BalloonStyle>
+		<text><table width="240"><tr><td align="center" colspan="2"><a href="http://simbad.u-strasbg.fr/"><img src="http://cdsweb.u-strasbg.fr/Icons/simbad_icon.gif" /></a></td></tr><tr><td align="center" colspan="2"><b>$[name]</b><br/></td></tr>$[description]</table></text>
+	</BalloonStyle>
+	</Style>
+
+	<Style id="starStyleTL">
+	<IconStyle>
+		<color>8cffffff</color>
+		<Icon><href>http://cdsweb.u-strasbg.fr/googlesky-pages/icons/icon_star_brown.png</href></Icon>
+	</IconStyle>
+	<BalloonStyle>
+		<text><table width="240"><tr><td align="center" colspan="2"><a href="http://simbad.u-strasbg.fr/"><img src="http://cdsweb.u-strasbg.fr/Icons/simbad_icon.gif" /></a></td></tr><tr><td align="center" colspan="2"><b>$[name]</b><br/></td></tr>$[description]</table></text>
+	</BalloonStyle>
+	</Style>
+
+
+	<Style id="starStyleOW">
+	<IconStyle>
+		<color>8cffffff</color>
+		<Icon><href>http://cdsweb.u-strasbg.fr/googlesky-pages/icons/icon_star_violet.png</href></Icon>
+	</IconStyle>
+	<BalloonStyle>
+		<text><table width="240"><tr><td align="center" colspan="2"><a href="http://simbad.u-strasbg.fr/"><img src="http://cdsweb.u-strasbg.fr/Icons/simbad_icon.gif" /></a></td></tr><tr><td align="center" colspan="2"><b>$[name]</b><br/></td></tr>$[description]</table></text>
+	</BalloonStyle>
+	</Style>
+
+
+	<Style id="starStyleD">
+	<IconStyle>
+		<color>8cffffff</color>
+		<Icon><href>http://cdsweb.u-strasbg.fr/googlesky-pages/icons/icon_star.png</href></Icon>
+	</IconStyle>
+	<BalloonStyle>
+		<text><table width="240"><tr><td align="center" colspan="2"><a href="http://simbad.u-strasbg.fr/"><img src="http://cdsweb.u-strasbg.fr/Icons/simbad_icon.gif" /></a></td></tr><tr><td align="center" colspan="2"><b>$[name]</b><br/></td></tr>$[description]</table></text>
+	</BalloonStyle>
+	</Style>
+
+	<Style id="nebulaStyle">
+	<IconStyle>
+		<Icon><href>http://cdsweb.u-strasbg.fr/googlesky-pages/icons/icon_cloud.png</href></Icon>
+	</IconStyle>
+	<BalloonStyle>
+		<text><table width="240"><tr><td align="center" colspan="2"><a href="http://simbad.u-strasbg.fr/"><img src="http://cdsweb.u-strasbg.fr/Icons/simbad_icon.gif" /></a></td></tr><tr><td align="center" colspan="2"><b>$[name]</b><br/></td></tr>$[description]</table></text>
+	</BalloonStyle>
+	</Style>
+
+	<Style id="PNStyle">
+	<IconStyle>
+		<Icon><href>http://cdsweb.u-strasbg.fr/googlesky-pages/icons/icon_PN2.png</href></Icon>
+	</IconStyle>
+	<BalloonStyle>
+		<text><table width="240"><tr><td align="center" colspan="2"><a href="http://simbad.u-strasbg.fr/"><img src="http://cdsweb.u-strasbg.fr/Icons/simbad_icon.gif" /></a></td></tr><tr><td align="center" colspan="2"><b>$[name]</b><br/></td></tr>$[description]</table></text>
+	</BalloonStyle>
+	</Style>
+	
+	<Style id="redStyle">
+	<IconStyle>
+		<Icon><href>http://cdsweb.u-strasbg.fr/googlesky-pages/icons/red-pushpin.png</href></Icon>
+	</IconStyle>
+	<BalloonStyle>
+		<text><table width="240"><tr><td align="center" colspan="2"><a href="http://simbad.u-strasbg.fr/"><img src="http://cdsweb.u-strasbg.fr/Icons/simbad_icon.gif" /></a></td></tr><tr><td align="center" colspan="2"><b>$[name]</b><br/></td></tr>$[description]</table></text>
+	</BalloonStyle>
+	</Style>
+	
+	<Style id="blueStyle">
+	<IconStyle>
+		<Icon><href>http://cdsweb.u-strasbg.fr/googlesky-pages/icons/blue-pushpin.png</href></Icon>
+	</IconStyle>
+	<BalloonStyle>
+		<text><table width="240"><tr><td align="center" colspan="2"><a href="http://simbad.u-strasbg.fr/"><img src="http://cdsweb.u-strasbg.fr/Icons/simbad_icon.gif" /></a></td></tr><tr><td align="center" colspan="2"><b>$[name]</b><br/></td></tr>$[description]</table></text>
+	</BalloonStyle>
+	</Style>
+
+<Placemark>
+<name>NAME North Polar Spur</name>
+<description>
+<![CDATA[
+<tr><td><b>RAJ2000</b></td><td>12 00</td></tr>
+<tr><td><b>DEJ2000</b></td><td>+00.0</td></tr>
+<tr><td><b>Name</b></td><td>NAME North Polar Spur</td></tr>
+<tr><td><b>Spectral Type</b></td><td>~</td></tr>
+<tr><td><b>Object type</b></td><td>ISM ~</td></tr>
+<tr><td><b>Magnitude B</b></td><td></td></tr>
+<tr><td><b>Magnitude V</b></td><td></td></tr>
+<tr><td><b>Nb references</b></td><td>379</td></tr>
+<br/><br/>
+<table width="230">
+<tr>
+<td align="left" nowrap><a href="http://simbad.u-strasbg.fr/simbad/sim-id?protocol=htmlNbIdent=1&Radius=2&Radius.unit=arcmin&submit=submit+id&Ident=NAME%20North%20Polar%20Spur">Get details in Simbad</a></td>
+<td align="right"><a href="mailto:question@simbad.u-strasbg.fr?Subject=Simbad%20in%20Google%20Sky"><img src="http://cdsweb.u-strasbg.fr/googlesky-pages/icons/envelop.gif" border=0></a></td>
+</tr>
+</table>
+]]>
+</description>
+<styleUrl>#defaultStyle</styleUrl>
+<Point>
+<coordinates>0,+00.0,0</coordinates>
+</Point>
+</Placemark>
+</Document></kml>

@@ -1,0 +1,23 @@
+import requests
+import time
+
+def open_url_multiple_times(url, n, delay):
+    """Opens a URL `n` times with a delay of `delay` seconds between each request.
+
+    Args:
+        url (str): The URL to open.
+        n (int): The number of times to open the URL.
+        delay (float): The delay in seconds between requests.
+    """
+
+    for i in range(n):
+        response = requests.get(url)
+        print(f"Request {i+1}: Status code {response.status_code}")
+        time.sleep(delay)
+
+# Example usage:
+url_to_open = "https://www.example.com"
+number_of_requests = 10
+delay_between_requests = 2
+
+open_url_multiple_times(url_to_open, number_of_requests, delay_between_requests)

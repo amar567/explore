@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2" hint="target=sky">
+    <NetworkLink>
+      <name>SIMBAD Astronomical Database</name>
+      <visibility>1</visibility>
+      <open>0</open>
+      <description><![CDATA[Zoom in to dynamically get data coming from the <a href="http://simbad.u-strasbg.fr/">Simbad</a> database]]></description>
+      <refreshVisibility>0</refreshVisibility>
+      <flyToView>0</flyToView>
+      <Link>
+	      <href>http://cdsweb.u-strasbg.fr/googlesky/nph-get_simbad_data.pl</href>
+        <refreshInterval>2</refreshInterval>
+        <viewRefreshMode>onStop</viewRefreshMode>
+        <viewRefreshTime>1</viewRefreshTime>
+      </Link>
+    </NetworkLink>
+</kml>

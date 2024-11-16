@@ -1,5 +1,5 @@
 let w,columns,rows,board,next,ImgVector,WeightMatrix,nOfImgs;// initialize some global variables
-let evolve = false;
+let evolve = false;//evolve is like in- let the siulation run/ let sys evolve
 
 
 // setup the p5 canvas 640x640 px where each pixel/neuron will be 40px wide 40px tall
